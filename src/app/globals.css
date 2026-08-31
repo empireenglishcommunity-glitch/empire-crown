@@ -1,0 +1,333 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════
+ * EMPIRE CROWN — design tokens
+ *
+ * Colour and type inherited verbatim from empire-oracle
+ * (assessment.empireenglish.online) so the two properties read as ONE empire.
+ * See design.md §2–§4.
+ * ═══════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  /* Surfaces */
+  --color-void: #000000;
+  --color-dark: #0a0a0a;
+  --color-card: #111118;
+  --color-charcoal: #1a1a2e;
+  --color-metal: #16213e;
+  --color-midnight: #0c0c24;
+
+  /* Accents */
+  --color-gold: #c9a84c;
+  --color-gold-lit: #e8d48b;
+  --color-bronze: #cd7f32;
+  --color-fire: #ff6b35;
+  --color-ember: #e74c3c;
+  --color-silver: #c0c0c0;
+
+  /* Text */
+  --color-cream: #e8e0d0;
+  --color-muted: #8b7355;
+
+  /* Families — bound to next/font CSS variables in layout.tsx */
+  --font-display: var(--font-cinzel), Georgia, serif;
+  --font-body: var(--font-playfair), Georgia, serif;
+  --font-data: var(--font-mono), ui-monospace, monospace;
+}
+
+:root {
+  --ring-gold: rgba(201, 168, 76, 0.55);
+  --edge: rgba(201, 168, 76, 0.18);
+  --edge-strong: rgba(201, 168, 76, 0.38);
+  --shell-max: 1200px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+
+* {
+  border-color: var(--edge);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #e8e0d0;
+  font-family: var(--font-body);
+  line-height: 1.7;
+  overflow-x: hidden;
+  /* Ambient imperial field — three offset radials, same recipe as the product site. */
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgba(26, 26, 46, 0.55) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 28%, rgba(201, 168, 76, 0.045) 0%, transparent 44%),
+    radial-gradient(ellipse at 50% 88%, rgba(12, 12, 36, 0.6) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.12;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.28);
+  color: #e8e0d0;
+}
+
+/* Focus ring — one visible treatment everywhere (R-A11Y-2). */
+:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.28);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.5);
+}
+
+/* ── Type scale (design.md §3.1) ───────────────────────────── */
+
+.t-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 9vw, 7rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.t-display-l {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.t-display-m {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.t-kicker {
+  font-family: var(--font-data);
+  font-size: clamp(0.6875rem, 1.3vw, 0.8125rem);
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+.t-body-l {
+  font-family: var(--font-body);
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
+  line-height: 1.75;
+}
+.t-data {
+  font-family: var(--font-data);
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ── Surface treatments ────────────────────────────────────── */
+
+.metallic {
+  background: linear-gradient(145deg, #111118, #1a1a2e);
+  border: 1px solid var(--edge);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(201, 168, 76, 0.09);
+}
+.metallic-hover:hover {
+  border-color: var(--edge-strong);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.65),
+    0 0 26px rgba(201, 168, 76, 0.09),
+    inset 0 1px 0 rgba(201, 168, 76, 0.16);
+}
+
+.tactical {
+  background: linear-gradient(180deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 10, 0.95));
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-left: 3px solid #c9a84c;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.42), transparent);
+}
+
+/* ── Text effects ──────────────────────────────────────────── */
+
+.text-glow {
+  text-shadow:
+    0 0 12px rgba(201, 168, 76, 0.45),
+    0 0 28px rgba(201, 168, 76, 0.22);
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmer 3.4s linear infinite;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 6px rgba(201, 168, 76, 0.28),
+      0 0 12px rgba(201, 168, 76, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(201, 168, 76, 0.5),
+      0 0 30px rgba(201, 168, 76, 0.2);
+  }
+}
+.glow-pulse {
+  animation: glow-pulse 3.2s ease-in-out infinite;
+}
+
+@keyframes orbit-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orbit-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes drift-down {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+.scroll-cue {
+  animation: drift-down 2.1s ease-in-out infinite;
+}
+
+/* ── Layout helper ─────────────────────────────────────────── */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 768px) {
+  .shell {
+    padding-inline: 2rem;
+  }
+}
+
+/* Corner brackets — the product site's signature framing device. */
+.brackets::before,
+.brackets::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: var(--edge-strong);
+  pointer-events: none;
+}
+.brackets::before {
+  top: 14px;
+  left: 14px;
+  border-left: 2px solid;
+  border-top: 2px solid;
+}
+.brackets::after {
+  bottom: 14px;
+  right: 14px;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+}
+
+/* ═══════════════════════════════════════════════════════════
+ * REDUCED MOTION (R-A11Y-3)
+ *
+ * Belt and braces: this CSS block kills declarative animation, and the
+ * useReducedMotion hook separately gates framer-motion and the JS counters.
+ * CSS alone cannot stop a requestAnimationFrame counter.
+ * ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .gold-shimmer {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: #c9a84c;
+    color: #c9a84c;
+  }
+
+  .glow-pulse,
+  .scroll-cue {
+    animation: none;
+  }
+}
