@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
+  Arabic,
   GlowingBorder,
   ImperialButton,
   Kicker,
@@ -31,6 +32,7 @@ import {
   assemblePhone,
   channel,
 } from '@/site.config';
+import { AR } from '@/i18n/ar';
 
 /**
  * §10 THE CONCIERGE — the primary CTA and the page's whole conversion mechanism.
@@ -71,6 +73,10 @@ type Intent = {
   showRegional: boolean;
   /** Which Instagram account this intent should be sent to, if any. */
   instagram: 'eec' | 'personal' | null;
+  /** Arabic label + sub-copy. The Concierge is the conversion surface, so it is
+   *  the single most important place on the page to be readable in Arabic. */
+  labelAr: string;
+  subAr: string;
 };
 
 const INTENTS: Intent[] = [
@@ -88,6 +94,8 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: false,
     instagram: 'eec',
+    labelAr: AR.concierge.labels.learn,
+    subAr: AR.concierge.intents.learn,
   },
   {
     id: 'consult',
@@ -103,6 +111,8 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: true,
     instagram: null,
+    labelAr: AR.concierge.labels.consult,
+    subAr: AR.concierge.intents.consult,
   },
   {
     id: 'business',
@@ -118,6 +128,8 @@ const INTENTS: Intent[] = [
     showLinkedIn: true,
     showRegional: true,
     instagram: 'personal',
+    labelAr: AR.concierge.labels.business,
+    subAr: AR.concierge.intents.business,
   },
   {
     id: 'mentorship',
@@ -133,6 +145,8 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: false,
     instagram: null,
+    labelAr: AR.concierge.labels.mentorship,
+    subAr: AR.concierge.intents.mentorship,
   },
   {
     id: 'media',
@@ -148,6 +162,8 @@ const INTENTS: Intent[] = [
     showLinkedIn: true,
     showRegional: false,
     instagram: 'personal',
+    labelAr: AR.concierge.labels.media,
+    subAr: AR.concierge.intents.media,
   },
 ];
 
@@ -249,6 +265,12 @@ export function Concierge() {
             <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
               &ldquo;Tell me what you need. I&rsquo;ll be on the other end.&rdquo;
             </p>
+            <Arabic display className="mx-auto mt-5 max-w-2xl text-lg text-[#c9a84c]">
+              {AR.concierge.title}
+            </Arabic>
+            <Arabic className="mx-auto mt-2 max-w-2xl text-[15px] text-[#b8a88a]">
+              {AR.concierge.lead}
+            </Arabic>
           </div>
         </Rise>
 
@@ -288,6 +310,16 @@ export function Concierge() {
                         <span className="mt-1 block text-[14px] text-[#b8a88a]">
                           {intent.sub}
                         </span>
+                        {/* Arabic label + sub. A learner who cannot read the English
+                            above must still be able to pick the right door. */}
+                        <Arabic
+                          as="span"
+                          className="mt-2 block text-[13.5px] leading-relaxed text-[#a08a63]"
+                        >
+                          <span className="font-bold text-[#b8a88a]">{intent.labelAr}</span>
+                          {' — '}
+                          {intent.subAr}
+                        </Arabic>
                       </span>
                       <span
                         className="shrink-0 font-[family-name:var(--font-data)] text-lg text-[#8b7355] transition-transform duration-300 group-hover:translate-x-1"

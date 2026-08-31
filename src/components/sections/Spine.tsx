@@ -1,6 +1,7 @@
 'use client';
 
-import { Kicker, Rise } from '@/components/ui';
+import { Arabic, Kicker, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 
 /**
  * §2 THE SPINE — the governing sentence, stated once, with nothing around it.
@@ -37,7 +38,18 @@ export function Spine() {
           </p>
         </Rise>
 
+        {/* The thesis in Arabic. This is the one line that MUST be readable by an
+            Arabic speaker who cannot yet read the English above it. */}
         <Rise index={2}>
+          <Arabic
+            display
+            className="mx-auto mt-9 max-w-2xl text-[clamp(1rem,2.2vw,1.4rem)] text-[#b8a88a]"
+          >
+            {AR.thesis}
+          </Arabic>
+        </Rise>
+
+        <Rise index={3}>
           <div className="hairline mx-auto mt-12 w-32" aria-hidden="true" />
         </Rise>
       </div>

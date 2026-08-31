@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Kicker, Rise } from '@/components/ui';
+import { ArabicSub, Kicker, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 import { useReducedMotion } from '@/lib/hooks';
 import { IDENTITY } from '@/site.config';
 
@@ -160,6 +161,7 @@ export function RoleConstellation() {
               &ldquo;People ask which one I really am. All of them. That was the
               plan.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.constellation}</ArabicSub>
           </div>
         </Rise>
 

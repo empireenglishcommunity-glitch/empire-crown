@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cinzel, Playfair_Display, JetBrains_Mono } from 'next/font/google';
+import { Cinzel, Playfair_Display, JetBrains_Mono, Tajawal } from 'next/font/google';
 import './globals.css';
 import { IDENTITY, CHANNELS, PROPERTIES } from '@/site.config';
 
@@ -29,6 +29,25 @@ const mono = JetBrains_Mono({
   variable: '--font-mono',
   display: 'swap',
   fallback: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+});
+
+/**
+ * Arabic display face.
+ *
+ * Required, not optional: Cinzel and Playfair Display contain no Arabic glyphs at all
+ * (verified against their Google Fonts unicode-ranges — neither declares the U+0600
+ * block). Without a real Arabic face the Arabic layer silently renders in the system
+ * UI font, which reads as cheap next to gold-on-black and undoes the whole aesthetic.
+ *
+ * Tajawal is geometric and modern, and sits naturally beside Cinzel without trying to
+ * imitate it — which is the right relationship between two scripts on one page.
+ */
+const tajawal = Tajawal({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-tajawal',
+  display: 'swap',
+  fallback: ['Segoe UI', 'Tahoma', 'sans-serif'],
 });
 
 /* ── Metadata (R-SEO-1/2) ──────────────────────────────────── */
@@ -163,7 +182,10 @@ function StructuredData() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${playfair.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${cinzel.variable} ${playfair.variable} ${mono.variable} ${tajawal.variable}`}
+    >
       <head>
         <StructuredData />
       </head>

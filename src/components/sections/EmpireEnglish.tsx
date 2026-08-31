@@ -3,6 +3,8 @@
 import { Brain, Languages, Lock } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
+  Arabic,
+  ArabicSub,
   GlowingBorder,
   ImperialButton,
   Kicker,
@@ -11,6 +13,7 @@ import {
   Rise,
 } from '@/components/ui';
 import { IDENTITY, PROPERTIES } from '@/site.config';
+import { AR } from '@/i18n/ar';
 
 /**
  * §8 EMPIRE ENGLISH COMMUNITY — the flagship offer.
@@ -28,6 +31,8 @@ type Pillar = {
   icon: LucideIcon;
   title: string;
   body: string;
+  /** Arabic rendering — the flagship offer must be legible to the target audience. */
+  bodyAr: string;
   accent: string;
 };
 
@@ -36,18 +41,21 @@ const PILLARS: Pillar[] = [
     icon: Languages,
     title: 'Real English',
     body: 'Not exam tricks. The English that works in a meeting, an interview, and a life you actually want.',
+    bodyAr: AR.eec.pillars.real,
     accent: '#c9a84c',
   },
   {
     icon: Brain,
     title: 'Right Mindset',
     body: 'We fix the fear first. Grammar is the easy half — the hard half is believing you can speak.',
+    bodyAr: AR.eec.pillars.mindset,
     accent: '#ff6b35',
   },
   {
     icon: Lock,
     title: 'Exclusive System',
     body: 'Six levels, ninety weeks, one path. Built here, from scratch. Available nowhere else.',
+    bodyAr: AR.eec.pillars.exclusive,
     accent: '#cd7f32',
   },
 ];
@@ -68,6 +76,7 @@ export function EmpireEnglish() {
             <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
               &ldquo;The number one thing I&rsquo;ve built. Not a course — a system.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.eec.lead}</ArabicSub>
           </div>
         </Rise>
 
@@ -93,6 +102,7 @@ export function EmpireEnglish() {
                   {p.title}
                 </h3>
                 <p className="text-[15px] leading-relaxed text-[#cfc4ae]">{p.body}</p>
+                <Arabic className="mt-3 text-[13.5px] text-[#a08a63]">{p.bodyAr}</Arabic>
               </MetallicCard>
             </Rise>
           ))}
@@ -105,10 +115,16 @@ export function EmpireEnglish() {
               <p className="mx-auto mb-3 max-w-2xl font-[family-name:var(--font-display)] text-xl font-bold uppercase tracking-[0.1em] text-[#e8e0d0] sm:text-2xl">
                 Start at your real level — not the one you guessed
               </p>
-              <p className="mx-auto mb-8 max-w-xl text-[15px] italic leading-relaxed text-[#b8a88a]">
+              <p className="mx-auto mb-4 max-w-xl text-[15px] italic leading-relaxed text-[#b8a88a]">
                 The placement test is free, adaptive, and built so it cannot be gamed. It
                 takes about thirty minutes and tells you the truth.
               </p>
+              <Arabic display className="mx-auto mb-2 max-w-xl text-base text-[#c9a84c]">
+                {AR.eec.cta}
+              </Arabic>
+              <Arabic className="mx-auto mb-8 max-w-xl text-[14px] text-[#b8a88a]">
+                {AR.eec.ctaSub}
+              </Arabic>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <ImperialButton
@@ -130,6 +146,9 @@ export function EmpireEnglish() {
               <p className="mx-auto mt-8 max-w-xl font-[family-name:var(--font-data)] text-[11px] leading-relaxed tracking-[0.08em] text-[#a08a63]">
                 CEFR-aligned, not a certifying body. We measure ability, not attendance.
               </p>
+              <Arabic className="mx-auto mt-3 max-w-xl text-[12.5px] text-[#a08a63]">
+                {AR.eec.honesty}
+              </Arabic>
 
               <p className="mt-6 font-[family-name:var(--font-display)] text-xs uppercase tracking-[0.3em] text-[#8b7355]">
                 {IDENTITY.eecTagline}

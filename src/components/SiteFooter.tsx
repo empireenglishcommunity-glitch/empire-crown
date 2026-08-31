@@ -1,4 +1,5 @@
-import { CrownEmblem } from '@/components/ui';
+import { Arabic, CrownEmblem } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 import { IDENTITY, PROPERTIES } from '@/site.config';
 
 /**
@@ -58,11 +59,13 @@ export function SiteFooter() {
           <p className="font-[family-name:var(--font-data)] text-[11px] leading-relaxed tracking-[0.04em] text-[#8f7a58]">
             Empire English Community is CEFR-aligned and is not a certifying body.
           </p>
+          <Arabic className="text-[12px] text-[#8f7a58]">{AR.footer.cefr}</Arabic>
           <p className="font-[family-name:var(--font-data)] text-[11px] leading-relaxed tracking-[0.04em] text-[#8f7a58]">
             Trading and investing are personal activities. Nothing on this page is
             financial advice, an offer, or a solicitation. No returns are promised or
             implied.
           </p>
+          <Arabic className="text-[12px] text-[#8f7a58]">{AR.footer.finance}</Arabic>
         </div>
 
         <p className="mt-9 text-center font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#7a6849]">

@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { Kicker, Rise } from '@/components/ui';
+import { ArabicSub, Kicker, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 
 /**
  * §7 THE CHAPTERS — the four photographs, each carrying one manifesto line.
@@ -76,6 +77,7 @@ export function PhotoChapters() {
               &ldquo;A photograph is a claim. These are the four I&rsquo;m willing to
               defend.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.chapters}</ArabicSub>
           </div>
         </Rise>
       </div>

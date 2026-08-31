@@ -1,6 +1,7 @@
 'use client';
 
-import { KickerClose, Kicker, MetallicCard, Rise } from '@/components/ui';
+import { ArabicSub, KickerClose, Kicker, MetallicCard, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 import { useCountUp, useInViewOnce } from '@/lib/hooks';
 import { STATS_PRIMARY, STATS_SECONDARY, type Stat } from '@/site.config';
 
@@ -67,6 +68,7 @@ export function Proof() {
             <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
               &ldquo;Anyone can claim a system. Here is mine, counted.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.proof}</ArabicSub>
           </div>
         </Rise>
 

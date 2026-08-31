@@ -1,6 +1,7 @@
 'use client';
 
-import { Kicker, KickerClose, Rise } from '@/components/ui';
+import { ArabicSub, Kicker, KickerClose, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 import { EEC_CHANNELS, PERSONAL_CHANNELS, type Channel } from '@/site.config';
 
 /** Brand marks kept as inline SVG paths — no icon-library dependency for logos. */
@@ -122,6 +123,7 @@ export function Channels() {
             <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
               &ldquo;Two brands. One operator. Follow the one you came for.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.channels}</ArabicSub>
           </div>
         </Rise>
 
