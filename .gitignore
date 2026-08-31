@@ -39,3 +39,6 @@ yarn-error.log*
 # editor
 .idea/
 .vscode/
+
+# Fonts fetched on demand by scripts/make_og_card.py (Google Fonts, not vendored)
+scripts/.fonts/
