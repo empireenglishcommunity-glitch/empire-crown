@@ -186,9 +186,13 @@ per session, **never committed**.
       into `photos-source/` under the same names and re-run the import script — no code
       change needed
 - [ ] Replace `public/og-image.jpg` with a designed share card
-- [ ] Look at the deployed page. **Nobody has seen it rendered yet** — the sandbox
-      browser cannot reach the sandbox's own localhost, so this build is verified
-      structurally but not visually
+- [x] **Deployed and visually verified** 2026-08-31 — https://empire-crown.pages.dev
+- [ ] **Add the DNS record** so the custom domain works: Cloudflare → DNS for
+      `empireenglish.online` → `CNAME  mahmoud-ashr → empire-crown.pages.dev`,
+      **Proxied**. The Pages custom domain is already attached and will validate itself
+      once the record exists
+- [ ] Merge PR #1 so `main` matches what is deployed
+- [ ] Record the subdomain in `empire-chronicle/SYSTEM-MAP.md` once DNS resolves
 - [ ] Record the new subdomain in `empire-chronicle/SYSTEM-MAP.md`
 
 ## Contributing
