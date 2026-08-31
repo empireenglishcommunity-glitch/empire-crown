@@ -1,6 +1,9 @@
 # Requirements — Mahmoud Ashri Personal Brand Landing Page
 
-**Spec status:** APPROVED — implementation in progress (Phases 1–4 built in the opening PR).
+**Spec status:** ✅ **DELIVERED AND LIVE** (2026-08-31, six PRs merged). English at `/`,
+Arabic at `/ar/`. This document records the requirements as they were *finally* met —
+where the original intent was later changed by the owner, the change is marked and the
+reason kept, because the reason is the part worth reading.
 **Deploy target:** `mahmoud-ashri.empireenglish.online` (Cloudflare Pages, static export)
 **Repo:** `empire-crown` — the founder/crown layer that sits above the product repos.
 
@@ -74,12 +77,19 @@ value is established. Self-sorting happens **after** the proof, never before it.
 | 7 | **The Chapters** | Four photographs, four manifesto lines. Humanize. |
 | 8 | **Empire English** | The flagship offer, with its honest framing. |
 | 9 | **The Doctrine** | Operating principles. Show *how* he thinks. |
-| 10 | **The Concierge** | Route the visitor. **Primary CTA.** |
+| 9b | **The Direct Line** | Real contact details, zero clicks. **Added 2026-08-31.** |
+| 10 | **The Concierge** | Route the undecided visitor. Guided CTA. |
 | 11 | **The Channels** | Social proof + follow. Secondary CTA. |
 | 12 | **Footer** | Identity, legal, honest disclaimers. |
 
 **R-STR-3** The Concierge MUST be reachable at any scroll depth via a persistent control
 (sticky header action and/or a floating action button), not only by scrolling to §10.
+
+**R-STR-4 (added 2026-08-31)** A **Direct Line** section MUST precede the Concierge,
+exposing WhatsApp, the personal Telegram and both phone numbers with **no interaction
+required**. The two coexist deliberately: DirectLine serves *"I want to reach him"*, the
+Concierge serves *"I'm not sure which door is mine"*. Offering the fast path first and
+catching the undecided immediately after beats making everyone answer a routing question.
 
 ### 3.2 The Constellation (the harmony mechanism)
 
@@ -149,16 +159,32 @@ visitor needs **before** exposing any contact channel.
 the owner can triage from the first line of the chat.
 **R-CNC-4** No backend, no form handler, no database. Every route is a deep link. This keeps
 the page a pure static export and adds zero running cost.
-**R-CNC-5 (privacy)** Contact exposure MUST be tiered, because raw contact strings on a
-public page are scraped within days:
+**R-CNC-5 (privacy) — ⚠️ SUPERSEDED 2026-08-31 by owner decision.**
+
+*Original requirement:* all phone numbers gated, revealed only on explicit click, because
+raw contact strings on a public page are scraped within days.
+
+*As shipped:* the owner asked — twice, explicitly — for direct personal contact to be
+**prominent**. Obfuscation works directly against prominence: a number nobody can see until
+they click is a weak call to action. The tiering is therefore now:
 
 | Tier | Channel | Exposure |
 |---|---|---|
-| Public | WhatsApp `+971 56 586 8882` | Deep link, obfuscated in markup |
-| Public | `empireenglishcommunity@gmail.com` | EEC / general |
-| Public | Telegram, TikTok ×2, Instagram, YouTube, LinkedIn, Facebook | Direct links |
-| Gated | `m.nasserashri@gmail.com` | Business/press intents only |
-| Gated | Egypt `+20 104 121 5787`, UAE `+971 50 703 9573` | Revealed on explicit click only |
+| **Public** | WhatsApp `+971 56 586 8882` | Deep link with pre-filled subject |
+| **Public** | **Telegram `@macal_emperor`** (personal, ≠ the EEC announcement group) | Direct link |
+| **Public** | **UAE `+971 50 703 9573`, Egypt `+20 104 121 5787`** | **In the clear, tap-to-call** |
+| **Public** | `empireenglishcommunity@gmail.com` | EEC / general |
+| **Public** | TikTok ×2, Instagram ×2, YouTube, Telegram group, LinkedIn, Facebook | Direct links |
+| **Gated** | `m.nasserashri@gmail.com` | Base64, assembled on click, business/press only |
+
+This is a **deliberate, owner-owned trade: reach beats scrape-resistance.** The cost is
+real and should be expected — published numbers get harvested, so spam calls and WhatsApp
+junk within weeks. It is documented in `site.config.ts` so that when it happens it reads as
+a known consequence rather than a mystery, along with the correct remedy: **a WhatsApp
+Business number as the public front door, NOT re-hiding these.**
+
+The business email stays gated because email harvesting is far more automated than phone
+harvesting, and an address in the clear attracts volume a number does not.
 
 **R-CNC-6** No contact string may appear as a plain crawlable `mailto:`/`tel:` in the initial
 HTML for gated tier items. They MUST be assembled at interaction time.
@@ -184,7 +210,23 @@ therefore **contractual** and MUST NOT be renamed.
 
 ### 3.6 Internationalisation
 
-**R-I18N-1** Ship English first. Arabic is specified but sequenced to a later phase.
+**R-I18N-1 — ✅ EXCEEDED.** English shipped first with an Arabic *bilingual spine* on the
+load-bearing moments (Phase 6a), then a **full Arabic locale at `/ar/`** with true RTL
+(Phase 6b). Register is **Modern Standard Arabic**, confirmed with the owner.
+
+**R-I18N-4 (added)** Arabic MUST NOT be treated as a font swap. Three properties are
+mandatory and are enforced in CSS and by `scripts/check_arabic.py`:
+1. `letter-spacing: 0` — Arabic letters **join**, and this design tracks text 0.06–0.35em,
+   which pulls joined forms apart so words visibly fracture.
+2. `text-transform: none` — Arabic has no case, so `uppercase` is a silent no-op; hierarchy
+   must come from weight and size.
+3. **Tajawal**, always — Cinzel and Playfair Display contain **zero** Arabic glyphs
+   (verified: neither declares the `U+0600` block).
+
+**R-I18N-5 (added)** Locale MUST NOT be auto-detected or auto-redirected. Detection may
+*suggest*; the visitor decides. Many Arabic speakers run English-language phones, so
+`navigator.language` reports `en-US` for exactly the low-fluency learner this is for — and
+redirecting breaks shared links, which matters when distribution *is* sharing.
 **R-I18N-2** Where Arabic appears in v1 (accent lines, section kickers), it MUST NOT place
 two or more embedded LTR tokens inside one Arabic line — a standing ecosystem bidi rule.
 **R-I18N-3** `<html lang>` MUST be correct, and any Arabic block MUST carry `dir="rtl"`.
@@ -243,13 +285,15 @@ money, no returns. This is both brand law and the correct regulatory posture in 
 
 ## 5. Explicitly out of scope for v1
 
-- Arabic locale (specified, Phase 6)
+- ~~Arabic locale~~ → **shipped** (Phases 6a + 6b)
 - Blog, newsletter, CMS
 - Booking calendar integration
-- Analytics (deliberate — no third-party tracker until the owner picks one)
+- ~~Analytics~~ → **shipped**: Cloudflare Web Analytics, edge-injected, zero bundle cost,
+  cookieless, no consent banner required. Verified active in-browser.
 - Testimonials (none verified yet; fabricating them would violate R-BRD and the ecosystem's
   honesty discipline)
-- Background soundtrack (asset exists in `empire-oracle`; deferred, and would be default-OFF)
+- ~~Background soundtrack~~ → **shipped** (Phase 7), default-OFF, `preload="none"`, zero
+  bytes fetched unless opted into.
 
 ---
 

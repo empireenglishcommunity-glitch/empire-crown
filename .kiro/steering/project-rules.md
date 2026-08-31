@@ -4,9 +4,14 @@ inclusion: always
 
 # empire-crown — project rules
 
-Personal brand landing page for Mahmoud Ashri at `mahmoud-ashri.empireenglish.online`.
-Next.js static export → Cloudflare Pages. Read
-`.kiro/specs/mahmoud-ashri-landing/` before changing anything structural.
+Personal brand landing page for Mahmoud Ashri. **Live and shipped** — English at
+`mahmoud-ashri.empireenglish.online`, Arabic at `/ar/`. Next.js static export → Cloudflare
+Pages. Read `.kiro/specs/mahmoud-ashri-landing/` before changing anything structural; its
+`tasks.md` status header is the reliable progress signal, not the checkboxes.
+
+**Both locales render one composition** (`src/components/PageBody.tsx`) with copy from one
+dictionary (`src/i18n/content.ts`). Never add a user-facing string to a component — add it
+to the dictionary in **both** locales.
 
 ## 1. Never publish an underived number
 
@@ -33,9 +38,16 @@ portfolio.
 All contacts, handles and URLs go in `src/site.config.ts`. Never hard-code one in a
 component.
 
-The business email and the two regional phone numbers are **gated**: stored as parts
-and assembled at click time via `assembleEmail()` / `assemblePhone()`, so the complete
-string never appears in the exported HTML. Do not "simplify" this into a plain
+**Changed 2026-08-31 at the owner's explicit, repeated instruction:** the UAE and Egypt
+phone numbers and the personal Telegram are now rendered **in the clear**, prominently, in
+the Direct Line section. Obfuscation works against prominence. This is an owner-owned trade
+— reach beats scrape-resistance — and the expected cost (harvesting → spam) is documented in
+`site.config.ts`. **Do not re-hide them.** If spam becomes a problem the remedy is a
+WhatsApp Business number as the public front door.
+
+The **business email remains gated**: stored base64-encoded and assembled at click time via
+`assembleEmail()`, so the complete string never appears in the exported HTML. Email
+harvesting is far more automated than phone harvesting. Do not "simplify" this into a plain
 `mailto:` — the whole point is that harvesters scraping the static export get nothing.
 
 After any change to the Concierge, re-verify:
@@ -62,6 +74,29 @@ sections close on a **kicker** — a short sharp final line. Use `<KickerClose>`
 for the MACAL real-estate content engine. It clashes with this page's cinematic
 gold-on-black register. Take the bible's *principles* (proof over posturing, plain
 speech, kickers), not its analogies.
+
+## 3b. Arabic is a second typographic system
+
+Run `python3 scripts/check_arabic.py --export` after ANY Arabic change.
+
+- **`letter-spacing` FRACTURES Arabic** — the letters join. `.ar-text` forces `0`.
+- **Arabic has no uppercase** — `text-transform` is a no-op; use weight and size.
+- **Cinzel/Playfair have ZERO Arabic glyphs** — Tajawal is mandatory, arabic subset only.
+- **Never ≥2 embedded Latin tokens in one Arabic line** (bidi reorders unpredictably).
+- **Never hand-write Arabic in a `.tsx`.** It goes in the dictionary.
+- Register is **MSA** and must not be mixed with dialect.
+- **His name is NOT translated.** Numbers stay `dir="ltr"` and mono.
+- Do **not** auto-detect or auto-redirect locale. Detection may suggest; the visitor decides.
+
+**Known gap in the guard:** it catches Arabic leaking *into* code but not English failing to
+*leave* it. An English audio label reached the Arabic page and was caught only by looking at
+a screenshot. **Render the page and look at it.**
+
+## 3c. Audio must stay free
+
+`preload="none"`, no autoplay, no interstitial. A visitor who ignores the control must
+download **zero bytes** — verify with `performance.getEntriesByType('resource')`. Do not
+"improve" this by preloading.
 
 ## 4. Accessibility rules that are already decided
 

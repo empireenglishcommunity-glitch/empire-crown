@@ -8,7 +8,7 @@ The founder/crown layer that sits above the product repos in the Empire ecosyste
 
 | | |
 |---|---|
-| **Live target** | `mahmoud-ashri.empireenglish.online` |
+| **Live** | **English** https://mahmoud-ashri.empireenglish.online · **Arabic** https://mahmoud-ashri.empireenglish.online/ar/ |
 | **Stack** | Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · framer-motion |
 | **Hosting** | Cloudflare Pages — **static export**, zero running cost |
 | **Spec** | [`.kiro/specs/mahmoud-ashri-landing/`](.kiro/specs/mahmoud-ashri-landing/) |
@@ -48,16 +48,52 @@ argument as an interactive control (the Constellation) rather than a paragraph.
  7  The Chapters       four photographs, four manifesto lines
  8  Empire English     the flagship offer
  9  The Doctrine       six operating principles
-10  The Concierge      intent router                  ← PRIMARY CTA
-11  The Channels       follow
+ 9b The Direct Line    real contact details, zero clicks
+10  The Concierge      intent router for the undecided
+11  The Channels       follow — grouped by brand
 12  Footer             identity + honest disclaimers
 ```
+
+Both locales render this same composition from `src/components/PageBody.tsx`.
 
 **Do not reorder without reading `design.md` §1.1.** The emotional turn is at §5:
 everything above it earns belief, everything below it spends belief. Moving the Proof
 later breaks the page.
 
 ---
+
+## Bilingual: two routes, one composition
+
+```
+/      → PageBody locale="en"
+/ar/   → PageBody locale="ar"
+```
+
+All copy in **one dictionary** (`src/i18n/content.ts`), read through a locale context. Two
+**root layouts** via route groups, because `lang`/`dir` belong on `<html>`.
+
+**Arabic is a second typographic system, not a font swap.** Three things fail silently
+otherwise, and a non-Arabic reader will not catch any of them in review:
+
+1. **`letter-spacing` fractures Arabic** — the letters join, and this design tracks text
+   0.06–0.35em. `.ar-text` forces `letter-spacing: 0`.
+2. **Arabic has no uppercase** — `text-transform: uppercase` is a no-op, so hierarchy must
+   come from weight and size.
+3. **Cinzel and Playfair contain zero Arabic glyphs** — verified against their unicode
+   ranges. Without **Tajawal**, Arabic silently falls back to the system UI font.
+
+```bash
+python3 scripts/check_arabic.py --export   # run after ANY Arabic change
+```
+
+It guards bidi (no line with ≥2 embedded Latin tokens), `.ar-text` on every Arabic node,
+`dir`/`lang`, Tajawal in the built CSS, no Arabic hand-written in a `.tsx`, and **fails if
+`/ar` ever drops below 2,000 Arabic characters** — which would mean the Arabic route had
+quietly started serving English.
+
+> **Known asymmetry:** this catches Arabic *leaking into* code, but **not English failing to
+> leave it**. An English audio label survived onto the Arabic page and was only caught by
+> looking at a screenshot. Render the page and look at it.
 
 ## Three rules that are not style preferences
 
@@ -163,6 +199,12 @@ read. The product site does this in a few places; that defect is not inherited h
 JetBrains Mono for numbers is a deliberate addition: §5 and §6 make an engineering
 argument, and serif numerals undercut it.
 
+## Ambient audio
+
+No autoplay, no interstitial, **`preload="none"`** — a visitor who ignores the control
+downloads **zero bytes**. Opus 453 KB with an mp3 fallback; the browser fetches one. Choice
+persisted; auto-pauses on tab blur.
+
 ## Deploying
 
 ```bash
@@ -176,23 +218,34 @@ per session, **never committed**.
 
 **Merging is not deploying.** As with `empire-dojo`, the deploy is a separate command.
 
-## Before going live
+## Status — shipped 2026-08-31
 
-- [x] Real photographs imported (2026-08-31) — see `docs/PHOTOS.md`
-- [x] Instagram handle confirmed: **`@empireenglishcommunity`** (2026-08-31). Follow-up:
-      `empire-oracle` still ships `@macals_empire_official` and should be corrected there
-- [ ] **Re-export the photographs at higher resolution.** All four are currently below
-      ~1200px wide, so they look slightly soft on a retina display. Drop larger files
-      into `photos-source/` under the same names and re-run the import script — no code
-      change needed
-- [ ] Replace `public/og-image.jpg` with a designed share card
-- [x] **Deployed and visually verified** 2026-08-31 — https://empire-crown.pages.dev
-- [ ] **Add the DNS record** so the custom domain works: Cloudflare → DNS for
-      `empireenglish.online` → `CNAME  mahmoud-ashr → empire-crown.pages.dev`,
-      **Proxied**. The Pages custom domain is already attached and will validate itself
-      once the record exists
-- [ ] Merge PR #1 so `main` matches what is deployed
-- [ ] Record the subdomain in `empire-chronicle/SYSTEM-MAP.md` once DNS resolves
+Six PRs merged. English and Arabic both live, custom domain resolving, TLS valid,
+Cloudflare Web Analytics active (edge-injected, zero bundle cost), immutable caching and
+five security headers in place, branded bilingual 404, per-locale OG cards.
+
+**Measured on the live site:** 472 KB total transfer, 23 requests, DOMContentLoaded
+~450–710 ms. Accessibility audit clean: 0 images without alt, 0 unlabelled controls, 0
+heading-level skips.
+
+### Outstanding — all owner-gated
+
+- [ ] **Review the ~130 Arabic strings** in `src/i18n/content.ts` (MSA register, confirmed)
+- [ ] **Re-export the four photographs larger.** All are below the ~1200px a panel wants on
+      a 2× display, so they are soft. Deliberately **not** upscaled — enlarging adds bytes,
+      not detail. Drop full-size files into `photos-source/` and re-run
+      `scripts/import_photos.py`. No code change needed.
+- [ ] **Rotate the Cloudflare API token** — it was pasted into a chat log
+
+### Engineering backlog, ranked by measured value
+
+- [ ] Photos → WebP: **391 KB → ~243 KB (−38%)**, no visible loss
+- [ ] Language toggle preserves the reader's section (it currently returns to the hero)
+- [ ] Formal throttled-4G Lighthouse run
+- [ ] Testimonials — **blocked on purpose**; needs real, attributable quotes. A collection
+      script was offered and parked by the owner. Deliberate deferral, not a forgotten task.
+
+Full detail in [`.kiro/specs/mahmoud-ashri-landing/tasks.md`](.kiro/specs/mahmoud-ashri-landing/tasks.md).
 - [ ] Record the new subdomain in `empire-chronicle/SYSTEM-MAP.md`
 
 ## Contributing
