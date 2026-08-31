@@ -37,7 +37,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 AR_SOURCE = ROOT / "src" / "i18n" / "ar.ts"
-EXPORT_HTML = ROOT / "out" / "index.html"
+EXPORT_PAGES = [ROOT / "out" / "index.html", ROOT / "out" / "ar" / "index.html"]
 EXPORT_CSS_DIR = ROOT / "out" / "_next" / "static" / "chunks"
 
 ARABIC_RANGE = r"[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]"
@@ -100,21 +100,39 @@ def check_source() -> list[str]:
 def check_export() -> list[str]:
     problems: list[str] = []
 
-    if not EXPORT_HTML.exists():
-        return [f"no export at {EXPORT_HTML.relative_to(ROOT)} — run `npm run build`"]
+    for page in EXPORT_PAGES:
+        if not page.exists():
+            problems.append(f"no export at {page.relative_to(ROOT)} — run `npm run build`")
+            continue
 
-    html = EXPORT_HTML.read_text(encoding="utf-8")
+        html = page.read_text(encoding="utf-8")
+        rel = page.relative_to(ROOT)
 
-    tags = re.findall(r"<(?:p|span|div|h[1-6])[^>]*lang=\"ar\"[^>]*>", html)
-    print(f"  {len(tags)} lang=\"ar\" elements in the export")
-    if not tags:
-        problems.append("no Arabic rendered in the export at all")
+        # The Arabic ROUTE sets dir on <html>, so its inner nodes do not repeat it.
+        # The English route interleaves Arabic into an LTR document, where every Arabic
+        # node must carry dir="rtl" itself or the bidi algorithm mis-orders it.
+        is_arabic_route = "ar/index.html" in str(rel).replace("\\", "/")
 
-    for t in tags:
-        if 'dir="rtl"' not in t:
-            problems.append(f'MISSING dir="rtl": {t[:100]}')
-        if "ar-text" not in t:
-            problems.append(f"MISSING .ar-text (tracking not reset): {t[:100]}")
+        if is_arabic_route:
+            if 'lang="ar" dir="rtl"' not in html:
+                problems.append(f'{rel}: <html lang="ar" dir="rtl"> missing')
+            arabic_chars = len(re.findall(ARABIC_RANGE, html))
+            print(f"  {rel}: RTL document, {arabic_chars} Arabic characters")
+            if arabic_chars < 2000:
+                problems.append(
+                    f"{rel}: only {arabic_chars} Arabic characters — the Arabic route "
+                    "looks like it is still serving English"
+                )
+        else:
+            tags = re.findall(r"<(?:p|span|div|h[1-6])[^>]*lang=\"ar\"[^>]*>", html)
+            print(f'  {rel}: {len(tags)} lang="ar" elements')
+            if not tags:
+                problems.append(f"{rel}: no Arabic rendered at all")
+            for t in tags:
+                if 'dir="rtl"' not in t:
+                    problems.append(f'{rel}: MISSING dir="rtl": {t[:90]}')
+                if "ar-text" not in t:
+                    problems.append(f"{rel}: MISSING .ar-text (tracking not reset): {t[:90]}")
 
     css_files = list(EXPORT_CSS_DIR.glob("*.css")) if EXPORT_CSS_DIR.exists() else []
     css = "\n".join(f.read_text(encoding="utf-8") for f in css_files)

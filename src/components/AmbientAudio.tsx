@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX, X } from 'lucide-react';
 import { useReducedMotion } from '@/lib/hooks';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /**
  * AMBIENT SOUNDTRACK — invitation, never a toll booth.
@@ -69,6 +70,7 @@ export function AmbientAudio() {
   const [playing, setPlaying] = useState(false);
   const [invite, setInvite] = useState(false);
   const reduced = useReducedMotion();
+  const { t, rtl } = useLocale();
 
   /** Ramp volume smoothly, then optionally pause. */
   const ramp = useCallback((to: number, thenPause = false) => {
@@ -188,7 +190,11 @@ export function AmbientAudio() {
         <source src="/audio/ambient.mp3" type="audio/mpeg" />
       </audio>
 
-      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5">
+      {/* Anchored to the reading-END corner in both directions, so it never covers the
+          start of a line. */}
+      <div
+        className={`fixed bottom-5 z-40 flex items-center gap-2.5 ${rtl ? 'left-5' : 'right-5'}`}
+      >
         {/* One-time invitation. Dismissible, self-dismissing, never blocking. */}
         {invite && (
           <div
@@ -198,9 +204,13 @@ export function AmbientAudio() {
             <button
               type="button"
               onClick={enable}
-              className="cursor-pointer font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.2em] text-[#c9a84c] transition-colors hover:text-[#e8d48b]"
+              className={`cursor-pointer text-[10px] text-[#c9a84c] transition-colors hover:text-[#e8d48b] ${
+                rtl
+                  ? 'ar-text text-[13px]'
+                  : 'font-[family-name:var(--font-data)] uppercase tracking-[0.2em]'
+              }`}
             >
-              Turn on the sound
+              {t.audio.invite}
             </button>
             <span className="text-[rgba(201,168,76,0.3)]" aria-hidden="true">
               |
@@ -211,7 +221,7 @@ export function AmbientAudio() {
                 setInvite(false);
                 writeChoice('off'); // "not now" means don't ask again
               }}
-              aria-label="Dismiss"
+              aria-label={t.audio.dismiss}
               className="cursor-pointer p-1 text-[#8b7355] transition-colors hover:text-[#c9a84c]"
             >
               <X className="h-3.5 w-3.5" />
@@ -222,9 +232,9 @@ export function AmbientAudio() {
         <button
           type="button"
           onClick={playing ? disable : enable}
-          aria-label={playing ? 'Mute ambient sound' : 'Play ambient sound'}
+          aria-label={playing ? t.audio.on : t.audio.off}
           aria-pressed={playing}
-          title={playing ? 'Sound on' : 'Sound off'}
+          title={playing ? t.audio.on : t.audio.off}
           className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border transition-all duration-300 hover:scale-105"
           style={{
             borderColor: playing ? 'rgba(201,168,76,0.6)' : 'rgba(201,168,76,0.25)',

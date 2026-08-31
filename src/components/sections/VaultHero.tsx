@@ -6,19 +6,25 @@ import { ChevronDown } from 'lucide-react';
 import { CrownEmblem, ImperialButton, Kicker } from '@/components/ui';
 import { useReducedMotion } from '@/lib/hooks';
 import { IDENTITY } from '@/site.config';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /**
  * §1 THE VAULT — the cold open.
  *
- * A visitor's default assumption on a personal site is "another link-in-bio".
- * The vault gesture contradicts that in the first second: a gold seam draws down
- * the centre, then two dark panels slide apart to reveal the content. Something was
- * kept in here, and it was closed until you arrived.
+ * A visitor's default assumption on a personal site is "another link-in-bio". The vault
+ * gesture contradicts that in the first second: a gold seam draws down the centre, then
+ * two dark panels slide apart. Something was kept in here, and it was closed until you
+ * arrived.
  *
  * Under reduced motion the vault is simply already open (design.md §4.1).
+ *
+ * The name itself is NOT translated — "MAHMOUD ASHRI" is a proper noun and the brand
+ * mark. On the Arabic page it stays Latin, which is also correct typographically: an
+ * Arabic transliteration of his own name would read as a different person.
  */
 export function VaultHero() {
   const reduced = useReducedMotion();
+  const { t, rtl } = useLocale();
 
   const panelTransition = { duration: 1.1, ease: [0.16, 1, 0.3, 1] as const, delay: 0.55 };
 
@@ -27,7 +33,6 @@ export function VaultHero() {
       id="vault"
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 py-24"
     >
-      {/* ── Backdrop: Dubai skyline, heavily darkened ── */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/photos/chapter-04-vision.jpg"
@@ -38,12 +43,10 @@ export function VaultHero() {
           sizes="100vw"
           className="object-cover object-center opacity-[0.28]"
         />
-        {/* Scrims: vertical for text legibility, radial to focus the centre. */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/85 via-[#0a0a0a]/60 to-[#0a0a0a]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(10,10,10,0.75)_75%)]" />
       </div>
 
-      {/* ── Vault panels ── */}
       {!reduced && (
         <>
           <motion.div
@@ -60,7 +63,6 @@ export function VaultHero() {
             animate={{ x: '100%' }}
             transition={panelTransition}
           />
-          {/* The seam: draws first, then fades as the panels part. */}
           <motion.div
             aria-hidden="true"
             className="absolute inset-y-0 left-1/2 z-30 w-[2px] -translate-x-1/2 origin-top"
@@ -76,7 +78,6 @@ export function VaultHero() {
         </>
       )}
 
-      {/* ── Content ── */}
       <motion.div
         className="relative z-10 mx-auto max-w-4xl text-center"
         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.97 }}
@@ -91,31 +92,51 @@ export function VaultHero() {
           <CrownEmblem size={88} />
         </motion.div>
 
-        <Kicker className="mb-6">{`${IDENTITY.company} · ${IDENTITY.locations}`}</Kicker>
+        <Kicker className={`mb-6 ${rtl ? 'ar-text' : ''}`}>{t.hero.kicker}</Kicker>
 
-        <h1 className="t-display-xl mb-5">
+        {/* Proper noun — Latin in both locales, by design. */}
+        <h1 className="t-display-xl mb-5" dir="ltr">
           <span className="gold-shimmer">{IDENTITY.nameUpper}</span>
         </h1>
 
-        <p className="mb-8 font-[family-name:var(--font-display)] text-sm tracking-[0.3em] text-[#b8a88a] sm:text-base">
-          {IDENTITY.roleLine}
+        <p
+          className={`mb-8 text-sm text-[#b8a88a] sm:text-base ${
+            rtl
+              ? 'ar-text ar-display text-base sm:text-lg'
+              : 'font-[family-name:var(--font-display)] tracking-[0.3em]'
+          }`}
+        >
+          {t.hero.roleLine}
         </p>
 
-        <p className="t-body-l mx-auto mb-11 max-w-2xl italic text-[#e8e0d0]">
-          &ldquo;{IDENTITY.heroLead}&rdquo;
+        <p
+          className={`t-body-l mx-auto mb-11 max-w-2xl text-[#e8e0d0] ${rtl ? 'ar-text' : 'italic'}`}
+        >
+          {rtl ? `«${t.hero.lead}»` : `\u201C${t.hero.lead}\u201D`}
         </p>
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <ImperialButton as="a" href="#concierge" variant="primary" size="lg">
-            Enter the Empire
+          <ImperialButton
+            as="a"
+            href="#concierge"
+            variant="primary"
+            size="lg"
+            className={rtl ? 'ar-text' : ''}
+          >
+            {t.hero.ctaPrimary}
           </ImperialButton>
-          <ImperialButton as="a" href="#proof" variant="outline" size="lg">
-            See the Proof
+          <ImperialButton
+            as="a"
+            href="#proof"
+            variant="outline"
+            size="lg"
+            className={rtl ? 'ar-text' : ''}
+          >
+            {t.hero.ctaSecondary}
           </ImperialButton>
         </div>
       </motion.div>
 
-      {/* ── Scroll cue ── */}
       <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
         <ChevronDown
           className="scroll-cue h-6 w-6 text-[#c9a84c] opacity-70"

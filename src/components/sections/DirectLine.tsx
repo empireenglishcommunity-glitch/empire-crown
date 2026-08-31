@@ -4,6 +4,7 @@ import { MessageCircle, Phone, Send } from 'lucide-react';
 import { Arabic, GlowingBorder, Kicker, MetallicCard, Rise } from '@/components/ui';
 import { CONTACT, whatsappLink } from '@/site.config';
 import { AR } from '@/i18n/ar';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /**
  * THE DIRECT LINE — owner-requested, deliberately unmissable.
@@ -27,7 +28,8 @@ import { AR } from '@/i18n/ar';
  * it was removed on purpose.
  */
 export function DirectLine() {
-  const wa = whatsappLink('Hello Mahmoud — ');
+  const { t, rtl } = useLocale();
+  const wa = whatsappLink(t.whatsappGreeting);
 
   return (
     <section id="direct" className="relative py-16 sm:py-20">
@@ -40,15 +42,18 @@ export function DirectLine() {
       <div className="shell relative">
         <Rise>
           <div className="mb-10 text-center">
-            <Kicker className="mb-4">No Forms · No Gatekeepers</Kicker>
-            <h2 className="t-display-l mb-4 text-[#c9a84c] text-glow">TALK TO ME DIRECTLY</h2>
-            <p className="t-body-l mx-auto max-w-2xl italic text-[#e8e0d0]">
-              &ldquo;You don&rsquo;t need an assistant, a form, or a funnel. Here are my
-              actual numbers.&rdquo;
+            <Kicker className={`mb-4 ${rtl ? 'ar-text' : ''}`}>{t.direct.kicker}</Kicker>
+            <h2 className={`mb-4 text-[#c9a84c] text-glow ${rtl ? 'ar-text ar-display text-[clamp(1.8rem,5vw,3.2rem)]' : 't-display-l'}`}>
+              {t.direct.title}
+            </h2>
+            <p className={`t-body-l mx-auto max-w-2xl text-[#e8e0d0] ${rtl ? 'ar-text' : 'italic'}`}>
+              {t.direct.lead}
             </p>
-            <Arabic className="mx-auto mt-4 max-w-2xl text-[15px] text-[#b8a88a]">
-              {AR.direct.lead}
-            </Arabic>
+            {!rtl && (
+              <Arabic className="mx-auto mt-4 max-w-2xl text-[15px] text-[#b8a88a]">
+                {AR.direct.lead}
+              </Arabic>
+            )}
           </div>
         </Rise>
 
@@ -81,8 +86,8 @@ export function DirectLine() {
                     />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63]">
-                      WhatsApp — fastest reply
+                    <span className={`block text-[10px] text-[#a08a63] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.22em]'}`}>
+                      {t.direct.whatsapp}
                     </span>
                     <span className="mt-1 block font-[family-name:var(--font-data)] text-[17px] font-bold text-[#e8e0d0]">
                       {CONTACT.whatsapp.display}
@@ -110,8 +115,8 @@ export function DirectLine() {
                     <Send className="h-5 w-5" style={{ color: '#2aabee' }} aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63]">
-                      Telegram — direct to me
+                    <span className={`block text-[10px] text-[#a08a63] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.22em]'}`}>
+                      {t.direct.telegram}
                     </span>
                     <span className="mt-1 block font-[family-name:var(--font-data)] text-[17px] font-bold text-[#e8e0d0]">
                       {CONTACT.telegramDirect.handle}
@@ -123,8 +128,8 @@ export function DirectLine() {
               <div className="hairline my-7" aria-hidden="true" />
 
               {/* ── Phone numbers, in the clear, tap-to-call ── */}
-              <p className="mb-4 text-center font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.24em] text-[#a08a63]">
-                Or call directly
+              <p className={`mb-4 text-center text-[10px] text-[#a08a63] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.24em]'}`}>
+                {t.direct.orCall}
               </p>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -139,8 +144,8 @@ export function DirectLine() {
                         className="h-4 w-4 text-[#c9a84c] transition-transform duration-300 group-hover:scale-110"
                         aria-hidden="true"
                       />
-                      <span className="font-[family-name:var(--font-display)] text-[11px] uppercase tracking-[0.2em] text-[#b8a88a]">
-                        {p.label}
+                      <span className={`text-[11px] text-[#b8a88a] ${rtl ? 'ar-text text-[13px]' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.2em]'}`}>
+                        {p.label === 'UAE' ? t.countries.uae : t.countries.egypt}
                       </span>
                     </span>
                     <span
@@ -153,13 +158,14 @@ export function DirectLine() {
                 ))}
               </div>
 
-              <p className="mt-6 text-center font-[family-name:var(--font-body)] text-[14px] italic text-[#b8a88a]">
-                I read my own messages. Bring something real and you&rsquo;ll get a real
-                answer.
+              <p className={`mt-6 text-center text-[14px] text-[#b8a88a] ${rtl ? 'ar-text' : 'font-[family-name:var(--font-body)] italic'}`}>
+                {t.direct.note}
               </p>
-              <Arabic className="mx-auto mt-2 max-w-lg text-center text-[13.5px] text-[#a08a63]">
-                {AR.direct.note}
-              </Arabic>
+              {!rtl && (
+                <Arabic className="mx-auto mt-2 max-w-lg text-center text-[13.5px] text-[#a08a63]">
+                  {AR.direct.note}
+                </Arabic>
+              )}
             </MetallicCard>
           </GlowingBorder>
         </Rise>
