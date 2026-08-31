@@ -33,6 +33,8 @@
   --font-display: var(--font-cinzel), Georgia, serif;
   --font-body: var(--font-playfair), Georgia, serif;
   --font-data: var(--font-mono), ui-monospace, monospace;
+  /* Arabic needs its own face — Cinzel/Playfair have no Arabic glyphs at all. */
+  --font-arabic: var(--font-tajawal), 'Segoe UI', Tahoma, sans-serif;
 }
 
 :root {
@@ -258,6 +260,52 @@ h6 {
 }
 .scroll-cue {
   animation: drift-down 2.1s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+ * ARABIC
+ *
+ * Not a font swap — a separate typographic system. Three hard rules:
+ *
+ * 1. letter-spacing MUST be 0. Arabic letters JOIN, and tracking pulls the joined
+ *    forms apart so words visibly fracture. This whole design is tracked
+ *    0.06–0.35em, so every Arabic node has to opt out. This is the single most
+ *    common way an Arabic layer looks broken.
+ *
+ * 2. text-transform MUST be none. Arabic has no case, so `uppercase` does nothing —
+ *    but leaving it on invites a developer to rely on caps for hierarchy, which
+ *    silently produces no hierarchy at all in Arabic.
+ *
+ * 3. Tajawal, always. Cinzel and Playfair Display contain ZERO Arabic glyphs
+ *    (verified: no U+0600 range in either), so Arabic set in them falls back to the
+ *    system UI font and the premium look collapses.
+ *
+ * Line-height is also raised: Arabic has taller ascenders/descenders and diacritics,
+ * so Latin line-height crowds it.
+ * ═══════════════════════════════════════════════════════════ */
+
+.ar-text {
+  font-family: var(--font-arabic), 'Segoe UI', Tahoma, sans-serif;
+  /* Rules 1 and 2 — non-negotiable. */
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  line-height: 1.9;
+  /* Arabic numerals in this context should read as Western digits, matching the
+     mono stats elsewhere on the page. */
+  font-variant-numeric: normal;
+}
+
+/* An Arabic line sitting beneath its English counterpart. */
+.ar-sub {
+  margin-top: 0.6rem;
+  font-size: 0.95em;
+  color: #b8a88a;
+}
+
+/* Arabic set at display size still must not be tracked. */
+.ar-display {
+  font-weight: 700;
+  line-height: 1.65;
 }
 
 /* ── Layout helper ─────────────────────────────────────────── */

@@ -108,18 +108,55 @@
 > 5.8 is not optional bookkeeping. An undocumented subdomain is how the ecosystem accumulated
 > two shipped initiatives that appeared in no document.
 
-## Phase 6 — Arabic (specified, not started)
+## Phase 6a — Arabic bilingual spine ✅ SHIPPED
 
-- [ ] 6.1 `/ar` route with `dir="rtl"`, mirrored layout
-- [ ] 6.2 Full Arabic copy for all twelve sections
-- [ ] 6.3 Arabic display face (Tajawal or Cairo) — Cinzel has no Arabic coverage
-- [ ] 6.4 Language toggle, persisted
-- [ ] 6.5 Bidi check: no Arabic line with ≥2 embedded LTR tokens (R-I18N-2)
-- [ ] 6.6 `hreflang` pair + per-locale OG
+English-first page, Arabic on the **load-bearing moments only**. A large share of the
+audience are native Arabic speakers who are not yet fluent in English; the moments that
+carry meaning and drive action must be readable by them.
 
-> 6.3 is the trap here. Cinzel simply has no Arabic glyphs, so an Arabic page inherits a
-> fallback face and instantly looks cheap. The Arabic locale needs its own display face chosen
-> deliberately, not a `font-family` swap.
+- [x] 6a.1 Tajawal wired via `next/font` (`--font-tajawal`, `subsets: ['arabic','latin']`)
+- [x] 6a.2 `.ar-text` / `.ar-sub` / `.ar-display` typographic system in `globals.css`
+- [x] 6a.3 `<Arabic>` + `<ArabicSub>` — the only sanctioned way to render Arabic
+- [x] 6a.4 All Arabic copy centralised in `src/i18n/ar.ts` (30 strings)
+- [x] 6a.5 Arabic on: thesis, 7 section leads, all 5 Concierge intents, the EEC offer
+      (lead + 3 pillars + CTA + honesty line), both footer disclaimers
+- [x] 6a.6 `scripts/check_arabic.py` — automated guard, passes on source **and** export
+- [x] 6a.7 Verified in a live browser: `dir=rtl`, `lang=ar`,
+      `letter-spacing: normal`, `text-transform: none`, **Tajawal actually loaded**
+
+### The three traps, and why they are enforced in code
+
+1. **`letter-spacing` destroys Arabic.** Arabic letters *join*; this design tracks text
+   0.06–0.35em, and that tracking pulls joined forms apart so words visibly **fracture**.
+   `.ar-text` forces `letter-spacing: 0 !important`. This is the single most common way an
+   Arabic layer looks broken, and a non-Arabic reader will not notice it in review.
+2. **Arabic has no uppercase.** `text-transform: uppercase` is a silent no-op, so
+   hierarchy in Arabic must come from weight and size — never caps.
+3. **Cinzel and Playfair Display have ZERO Arabic glyphs.** Verified against their Google
+   Fonts unicode-ranges: neither declares the `U+0600` block. Without Tajawal, Arabic
+   silently falls back to the system UI font and the premium look collapses.
+
+Plus the standing **bidi rule**: never an Arabic line with ≥2 embedded Latin tokens — the
+bidirectional algorithm reorders them differently across browsers. `check_arabic.py`
+enforces it, and also rejects Arabic hand-written inline in a `.tsx` instead of `ar.ts`.
+
+## Phase 6b — full `/ar` route (specified, not started)
+
+- [ ] 6b.1 `/ar` route, mirrored RTL layout using logical properties (`ps-`/`pe-`/`ms-`/`me-`)
+- [ ] 6b.2 Full Arabic parity for all twelve sections
+- [ ] 6b.3 Language **offer** bar + persisted toggle — **detect, never auto-redirect**
+- [ ] 6b.4 `hreflang` pair + per-locale OG card
+- [ ] 6b.5 Arabic WhatsApp prefills in the Concierge
+- [ ] 6b.6 Audit `pl-*` / `left-*` / `translate-x` for RTL correctness
+
+> **Deliberately NOT auto-detecting locale.** Many Arabic speakers run English-language
+> phones — so `navigator.language` reports `en-US` for exactly the low-fluency learner we
+> are trying to reach, while switching people who never asked. It also breaks shared
+> links, which matters when distribution *is* sharing. Detect, then *offer*. The visitor
+> decides.
+>
+> Note the Constellation's polar maths is direction-agnostic and the photo chapters
+> already alternate sides, so the RTL audit is cheaper than it looks.
 
 ## Phase 7 — Enhancements (backlog, deliberately deferred)
 

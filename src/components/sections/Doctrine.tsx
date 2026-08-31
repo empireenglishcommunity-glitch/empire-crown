@@ -1,6 +1,7 @@
 'use client';
 
 import { KickerClose, Rise, SectionShell } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 
 /**
  * §9 THE DOCTRINE — six operating principles.
@@ -53,6 +54,7 @@ export function Doctrine() {
       kicker="How I Operate"
       title="THE DOCTRINE"
       lead="&ldquo;Six rules. I didn&rsquo;t read them in a book — I paid for each one.&rdquo;"
+      leadAr={AR.doctrine}
     >
       <div className="grid grid-cols-1 gap-x-12 gap-y-9 lg:grid-cols-2">
         {PRINCIPLES.map((p, i) => (

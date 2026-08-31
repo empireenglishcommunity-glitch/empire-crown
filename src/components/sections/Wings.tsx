@@ -3,6 +3,7 @@
 import { Compass, Crown, Flame, Settings2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { KickerClose, MetallicCard, Rise, SectionShell } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 
 /**
  * §4 THE FOUR WINGS — one spine, four wings.
@@ -63,6 +64,7 @@ export function Wings() {
       kicker="One Spine · Four Wings"
       title="THE ARCHITECTURE OF A PERSON"
       lead="&ldquo;Ten titles is not ten careers. It&rsquo;s one system with four wings.&rdquo;"
+      leadAr={AR.wings}
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {WINGS.map((wing, i) => (

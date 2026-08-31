@@ -42,6 +42,60 @@ export function Rise({
   );
 }
 
+/* ── Arabic text ───────────────────────────────────────────────
+ * The ONLY sanctioned way to render Arabic on this page.
+ *
+ * Always emits lang="ar" and dir="rtl", and always carries .ar-text, which forces
+ * letter-spacing:0 and text-transform:none. Those two resets are why this is a
+ * component rather than a className people apply by hand: the design's global
+ * tracking silently fractures joined Arabic letterforms, and it is the kind of defect
+ * that a non-Arabic reader will not notice in review.
+ *
+ * Never hand-write an Arabic string into JSX. Add it to src/i18n/ar.ts and render it
+ * through here.
+ * ───────────────────────────────────────────────────────────── */
+
+export function Arabic({
+  children,
+  className = '',
+  as: Tag = 'p',
+  display = false,
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: 'p' | 'span' | 'div';
+  display?: boolean;
+}) {
+  return (
+    <Tag
+      lang="ar"
+      dir="rtl"
+      className={`ar-text ${display ? 'ar-display' : ''} ${className}`}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+/** Arabic line sitting directly beneath its English counterpart. */
+export function ArabicSub({
+  children,
+  className = '',
+  align = 'center',
+}: {
+  children: ReactNode;
+  className?: string;
+  align?: 'center' | 'start';
+}) {
+  return (
+    <Arabic
+      className={`ar-sub ${align === 'center' ? 'text-center' : 'text-right'} ${className}`}
+    >
+      {children}
+    </Arabic>
+  );
+}
+
 /* ── Kicker ────────────────────────────────────────────────── */
 
 export function Kicker({
@@ -65,6 +119,7 @@ export function SectionShell({
   kicker,
   title,
   lead,
+  leadAr,
   children,
   className = '',
   align = 'center',
@@ -73,6 +128,8 @@ export function SectionShell({
   kicker?: string;
   title?: string;
   lead?: string;
+  /** Arabic rendering of `lead`. Optional, but every major section should have one. */
+  leadAr?: string;
   children: ReactNode;
   className?: string;
   align?: 'center' | 'left';
@@ -97,6 +154,14 @@ export function SectionShell({
                 >
                   {lead}
                 </p>
+              )}
+              {leadAr && (
+                <ArabicSub
+                  align={align === 'center' ? 'center' : 'start'}
+                  className={`max-w-2xl ${align === 'center' ? 'mx-auto' : ''}`}
+                >
+                  {leadAr}
+                </ArabicSub>
               )}
               <div
                 className={`hairline w-24 mt-7 ${align === 'center' ? 'mx-auto' : ''}`}

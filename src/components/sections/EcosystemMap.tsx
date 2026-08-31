@@ -11,7 +11,8 @@ import {
   Target,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { KickerClose, Kicker, MetallicCard, Rise } from '@/components/ui';
+import { ArabicSub, KickerClose, Kicker, MetallicCard, Rise } from '@/components/ui';
+import { AR } from '@/i18n/ar';
 import { useInViewOnce, useReducedMotion } from '@/lib/hooks';
 import { IDENTITY } from '@/site.config';
 
@@ -109,6 +110,7 @@ export function EcosystemMap() {
               &ldquo;Most people show you a client list. I&rsquo;ll show you the
               wiring.&rdquo;
             </p>
+            <ArabicSub className="mx-auto max-w-2xl">{AR.ecosystem}</ArabicSub>
           </div>
         </Rise>
 
