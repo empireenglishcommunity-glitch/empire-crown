@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { ArabicSub, Kicker, Rise } from '@/components/ui';
 import { AR } from '@/i18n/ar';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /**
  * §7 THE CHAPTERS — the four photographs, each carrying one manifesto line.
@@ -15,78 +16,40 @@ import { AR } from '@/i18n/ar';
  * placeholders in place. Renaming these files breaks the page.
  */
 
-type Chapter = {
-  numeral: string;
-  title: string;
-  src: string;
-  alt: string;
-  line: string;
-  body: string;
-  /** object-position, tuned per photograph so the crop never cuts the face. */
-  focus: string;
-};
-
-const CHAPTERS: Chapter[] = [
-  {
-    numeral: 'I',
-    title: 'Diplomacy',
-    src: '/photos/chapter-01-diplomacy.jpg',
-    alt: 'Mahmoud Ashri in a black suit standing before national flags at an official reception',
-    line: 'I represent something bigger than myself.',
-    body: 'When you carry a name, you stop making decisions for yourself alone. Everything I build has to survive being looked at.',
-    focus: 'center 22%',
-  },
-  {
-    numeral: 'II',
-    title: 'Authority',
-    src: '/photos/chapter-02-authority.jpg',
-    alt: 'Mahmoud Ashri seated in a leather chair in a marble lobby, hands clasped',
-    line: 'Authority is quiet.',
-    body: "The loudest man in the room is usually the one with the least to show. I'd rather the work did the talking.",
-    focus: 'center 25%',
-  },
-  {
-    numeral: 'III',
-    title: 'Presence',
-    src: '/photos/chapter-03-presence.jpg',
-    alt: 'Mahmoud Ashri at an evening industry event, guests gathered behind him',
-    line: "I move in rooms I was told I'd never enter.",
-    body: 'Nobody handed me access. I built something worth letting in.',
-    focus: 'center 20%',
-  },
-  {
-    numeral: 'IV',
-    title: 'Vision',
-    src: '/photos/chapter-04-vision.jpg',
-    alt: 'Mahmoud Ashri on a terrace at dusk with the Dubai skyline behind him',
-    line: 'I build where the skyline is still going up.',
-    body: "Dubai doesn't reward nostalgia. Neither do I. Build for the version of the world that's arriving.",
-    focus: 'center 18%',
-  },
+/** Structural metadata only — copy comes from the dictionary. */
+const CHAPTER_META: { key: string; numeral: string; src: string; focus: string }[] = [
+  { key: 'diplomacy', numeral: 'I', src: '/photos/chapter-01-diplomacy.jpg', focus: 'center 22%' },
+  { key: 'authority', numeral: 'II', src: '/photos/chapter-02-authority.jpg', focus: 'center 25%' },
+  { key: 'presence', numeral: 'III', src: '/photos/chapter-03-presence.jpg', focus: 'center 20%' },
+  { key: 'vision', numeral: 'IV', src: '/photos/chapter-04-vision.jpg', focus: 'center 18%' },
 ];
 
 export function PhotoChapters() {
+  const { t, rtl } = useLocale();
+
   return (
     <section id="chapters" className="relative py-20 sm:py-28">
       <div className="shell">
         <Rise>
           <div className="mb-16 text-center">
-            <Kicker className="mb-4">Four Frames</Kicker>
-            <h2 className="t-display-l mb-5 text-[#c9a84c] text-glow">THE CHAPTERS</h2>
-            <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
-              &ldquo;A photograph is a claim. These are the four I&rsquo;m willing to
-              defend.&rdquo;
+            <Kicker className="mb-4">{t.chapters.kicker}</Kicker>
+            <h2 className={`mb-5 text-[#c9a84c] text-glow ${rtl ? 'ar-text ar-display text-[clamp(1.8rem,5vw,3.2rem)]' : 't-display-l'}`}>
+              {t.chapters.title}
+            </h2>
+            <p className={`t-body-l mx-auto max-w-2xl text-[#b8a88a] ${rtl ? 'ar-text' : 'italic'}`}>
+              {t.chapters.lead}
             </p>
-            <ArabicSub className="mx-auto max-w-2xl">{AR.chapters}</ArabicSub>
+            {!rtl && <ArabicSub className="mx-auto max-w-2xl">{AR.chapters}</ArabicSub>}
           </div>
         </Rise>
       </div>
 
       <div className="space-y-16 sm:space-y-24">
-        {CHAPTERS.map((c, i) => {
-          const imageRight = i % 2 === 1;
+        {CHAPTER_META.map((meta, i) => {
+          const c = t.chapters.items[meta.key];
+          const imageRight = rtl ? i % 2 === 0 : i % 2 === 1;
           return (
-            <Rise key={c.numeral}>
+            <Rise key={meta.key}>
               <div className="shell">
                 <div
                   className={`flex flex-col items-center gap-8 lg:gap-14 ${
@@ -104,13 +67,13 @@ export function PhotoChapters() {
                       }}
                     >
                       <Image
-                        src={c.src}
+                        src={meta.src}
                         alt={c.alt}
                         fill
                         loading="lazy"
                         sizes="(max-width: 1024px) 100vw, 46vw"
                         className="object-cover"
-                        style={{ objectPosition: c.focus }}
+                        style={{ objectPosition: meta.focus }}
                       />
                       {/* Cinematic bottom scrim + gold top edge */}
                       <div
@@ -135,23 +98,23 @@ export function PhotoChapters() {
                         }}
                       >
                         <span className="font-[family-name:var(--font-display)] text-sm font-bold text-[#c9a84c]">
-                          {c.numeral}
+                          {meta.numeral}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   {/* ── Text ── */}
-                  <div className="w-full text-center lg:w-[54%] lg:text-left">
-                    <Kicker className="mb-5">{`Chapter ${c.numeral} — ${c.title}`}</Kicker>
-                    <p className="mb-6 font-[family-name:var(--font-display)] text-[clamp(1.5rem,3.6vw,2.6rem)] font-bold uppercase leading-[1.22] tracking-[0.03em] text-[#e8e0d0]">
-                      &ldquo;{c.line}&rdquo;
+                  <div className={`w-full text-center lg:w-[54%] ${rtl ? 'lg:text-right' : 'lg:text-left'}`}>
+                    <Kicker className="mb-5">{`Chapter ${meta.numeral} — ${c.title}`}</Kicker>
+                    <p className={`mb-6 text-[clamp(1.5rem,3.6vw,2.6rem)] font-bold leading-[1.22] text-[#e8e0d0] ${rtl ? 'ar-text ar-display' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.03em]'}`}>
+                      {rtl ? `\u00AB${c.line}\u00BB` : `\u201C${c.line}\u201D`}
                     </p>
                     <div
-                      className="hairline mx-auto mb-6 w-20 lg:mx-0"
+                      className={`hairline mx-auto mb-6 w-20 ${rtl ? 'lg:mr-0 lg:ml-auto' : 'lg:mx-0'}`}
                       aria-hidden="true"
                     />
-                    <p className="t-body-l mx-auto max-w-xl text-[#cfc4ae] lg:mx-0">
+                    <p className={`t-body-l mx-auto max-w-xl text-[#cfc4ae] lg:mx-0 ${rtl ? 'ar-text' : ''}`}>
                       {c.body}
                     </p>
                   </div>

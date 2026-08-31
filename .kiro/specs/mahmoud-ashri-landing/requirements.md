@@ -1,7 +1,7 @@
 # Requirements — Mahmoud Ashri Personal Brand Landing Page
 
 **Spec status:** APPROVED — implementation in progress (Phases 1–4 built in the opening PR).
-**Deploy target:** `mahmoud-ashr.empireenglish.online` (Cloudflare Pages, static export)
+**Deploy target:** `mahmoud-ashri.empireenglish.online` (Cloudflare Pages, static export)
 **Repo:** `empire-crown` — the founder/crown layer that sits above the product repos.
 
 > Read this file with `design.md` (the visual + copy system) and `tasks.md` (the phased

@@ -2,6 +2,7 @@
 
 import { ArabicSub, Kicker, KickerClose, Rise } from '@/components/ui';
 import { AR } from '@/i18n/ar';
+import { useLocale } from '@/i18n/LocaleProvider';
 import { EEC_CHANNELS, PERSONAL_CHANNELS, type Channel } from '@/site.config';
 
 /** Brand marks kept as inline SVG paths — no icon-library dependency for logos. */
@@ -25,7 +26,7 @@ function markFor(id: string): string {
   return MARKS[id] ?? MARKS.instagram;
 }
 
-function ChannelCard({ c }: { c: Channel }) {
+function ChannelCard({ c, reason, rtl }: { c: Channel; reason: string; rtl: boolean }) {
   return (
     <a href={c.url} target="_blank" rel="noopener noreferrer" className="group block h-full">
       <div className="relative h-full overflow-hidden rounded-xl border border-[rgba(201,168,76,0.15)] bg-gradient-to-br from-[#111118] to-[#1a1a2e] p-6 transition-all duration-500 hover:-translate-y-1 hover:border-[rgba(201,168,76,0.4)]">
@@ -61,7 +62,7 @@ function ChannelCard({ c }: { c: Channel }) {
               </svg>
             </span>
             <span className="min-w-0">
-              <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold uppercase tracking-[0.12em] text-[#e8e0d0]">
+              <span className={`block text-[13px] font-bold text-[#e8e0d0] ${rtl ? 'ar-text' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.12em]'}`}>
                 {c.platform}
               </span>
               <span
@@ -72,7 +73,7 @@ function ChannelCard({ c }: { c: Channel }) {
               </span>
             </span>
           </div>
-          <p className="text-[14px] leading-relaxed text-[#cfc4ae]">{c.reason}</p>
+          <p className={`text-[14px] leading-relaxed text-[#cfc4ae] ${rtl ? 'ar-text' : ''}`}>{reason}</p>
         </div>
       </div>
     </a>
@@ -96,17 +97,19 @@ function ChannelCard({ c }: { c: Channel }) {
  * age badly and invite comparison; a reason is an argument.
  */
 export function Channels() {
+  const { t, rtl } = useLocale();
+
   const groups = [
     {
       key: 'eec',
-      label: 'Empire English Community',
-      note: 'For the learners. Teaching, community, announcements.',
+      label: t.channels.groupEec,
+      note: t.channels.groupEecNote,
       channels: EEC_CHANNELS.filter((c) => c.primary),
     },
     {
       key: 'personal',
-      label: 'MACAL Empire · Personal',
-      note: 'For the builders. Business, discipline, the standard.',
+      label: t.channels.groupPersonal,
+      note: t.channels.groupPersonalNote,
       channels: PERSONAL_CHANNELS.filter((c) => c.primary),
     },
   ];
@@ -118,12 +121,14 @@ export function Channels() {
       <div className="shell">
         <Rise>
           <div className="mb-14 text-center">
-            <Kicker className="mb-4">Beyond This Page</Kicker>
-            <h2 className="t-display-l mb-5 text-[#c9a84c] text-glow">THE CHANNELS</h2>
-            <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
-              &ldquo;Two brands. One operator. Follow the one you came for.&rdquo;
+            <Kicker className={`mb-4 ${rtl ? 'ar-text' : ''}`}>{t.channels.kicker}</Kicker>
+            <h2 className={`mb-5 text-[#c9a84c] text-glow ${rtl ? 'ar-text ar-display text-[clamp(1.8rem,5vw,3.2rem)]' : 't-display-l'}`}>
+              {t.channels.title}
+            </h2>
+            <p className={`t-body-l mx-auto max-w-2xl text-[#b8a88a] ${rtl ? 'ar-text' : 'italic'}`}>
+              {t.channels.lead}
             </p>
-            <ArabicSub className="mx-auto max-w-2xl">{AR.channels}</ArabicSub>
+            {!rtl && <ArabicSub className="mx-auto max-w-2xl">{AR.channels}</ArabicSub>}
           </div>
         </Rise>
 
@@ -131,18 +136,21 @@ export function Channels() {
           {groups.map((group) => (
             <div key={group.key}>
               <Rise>
-                <div className="mb-7 flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
+                <div className={`mb-7 flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-between ${rtl ? 'sm:text-right' : 'sm:text-left'}`}>
                   <div>
-                    <h3 className="font-[family-name:var(--font-display)] text-base font-bold uppercase tracking-[0.2em] text-[#c9a84c] sm:text-lg">
+                    <h3 className={`text-base font-bold text-[#c9a84c] sm:text-lg ${rtl ? 'ar-text ar-display' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.2em]'}`}>
                       {group.label}
                     </h3>
-                    <p className="mt-1.5 text-[14px] italic text-[#b8a88a]">{group.note}</p>
+                    <p className={`mt-1.5 text-[14px] text-[#b8a88a] ${rtl ? 'ar-text' : 'italic'}`}>
+                      {group.note}
+                    </p>
                   </div>
                   <div
-                    className="hidden h-px flex-1 sm:ml-8 sm:block"
+                    className={`hidden h-px flex-1 sm:block ${rtl ? 'sm:mr-8' : 'sm:ml-8'}`}
                     style={{
-                      background:
-                        'linear-gradient(90deg, rgba(201,168,76,0.35), transparent)',
+                      background: rtl
+                        ? 'linear-gradient(270deg, rgba(201,168,76,0.35), transparent)'
+                        : 'linear-gradient(90deg, rgba(201,168,76,0.35), transparent)',
                     }}
                     aria-hidden="true"
                   />
@@ -152,7 +160,7 @@ export function Channels() {
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {group.channels.map((c, i) => (
                   <Rise key={c.id} index={i}>
-                    <ChannelCard c={c} />
+                    <ChannelCard c={c} reason={t.channels.reasons[c.id]} rtl={rtl} />
                   </Rise>
                 ))}
               </div>
@@ -170,7 +178,7 @@ export function Channels() {
                   href={c.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(201,168,76,0.2)] px-4 py-2 font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.18em] text-[#a08a63] transition-all duration-300 hover:border-[rgba(201,168,76,0.45)] hover:text-[#c9a84c]"
+                  className={`inline-flex items-center gap-2 rounded-full border border-[rgba(201,168,76,0.2)] px-4 py-2 text-[10px] text-[#a08a63] transition-all duration-300 hover:border-[rgba(201,168,76,0.45)] hover:text-[#c9a84c] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.18em]'}`}
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
                     <path d={markFor(c.id)} />
@@ -182,7 +190,7 @@ export function Channels() {
           </Rise>
         )}
 
-        <KickerClose>Follow if you build. Unfollow if you drift.</KickerClose>
+        <KickerClose>{t.channels.close}</KickerClose>
       </div>
     </section>
   );

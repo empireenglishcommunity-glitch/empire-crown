@@ -13,8 +13,8 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { ArabicSub, KickerClose, Kicker, MetallicCard, Rise } from '@/components/ui';
 import { AR } from '@/i18n/ar';
+import { useLocale } from '@/i18n/LocaleProvider';
 import { useInViewOnce, useReducedMotion } from '@/lib/hooks';
-import { IDENTITY } from '@/site.config';
 
 /**
  * §6 THE ECOSYSTEM — the single most differentiating section on the page.
@@ -28,73 +28,18 @@ import { IDENTITY } from '@/site.config';
  * the node text stays real selectable HTML — better for a11y and for SEO than <text>.
  */
 
-type Node = {
-  id: string;
-  name: string;
-  icon: LucideIcon;
-  short: string;
-  detail: string;
-  accent: string;
-};
-
-const NODES: Node[] = [
-  {
-    id: 'eec',
-    name: 'Empire English Community',
-    icon: GraduationCap,
-    short: 'Six CEFR levels. The flagship.',
-    detail:
-      'A complete A1→C2 programme: 90 weeks of curriculum across five parallel tracks — reading, grammar, accent, mediation and extended listening.',
-    accent: '#c9a84c',
-  },
-  {
-    id: 'engine',
-    name: 'The Learning Engine',
-    icon: Bot,
-    short: 'Teaches, tracks and promotes — daily.',
-    detail:
-      'A Discord-based system that delivers daily practice, records submissions, scores progress against can-do descriptors and promotes students between levels on evidence.',
-    accent: '#cd7f32',
-  },
-  {
-    id: 'practice',
-    name: 'The Practice Site',
-    icon: ScrollText,
-    short: 'Thousands of generated pages.',
-    detail:
-      'Every curriculum week compiles into drill, reading and listening pages, verified by an automated build before anything reaches a student.',
-    accent: '#cd7f32',
-  },
-  {
-    id: 'assessment',
-    name: 'The Assessment Engine',
-    icon: Target,
-    short: 'Adaptive placement, four skills.',
-    detail:
-      'Reading, listening, speaking and writing, scored adaptively into a per-skill CEFR profile. Built to resist memorisation: no two sessions share a question path.',
-    accent: '#c9a84c',
-  },
-  {
-    id: 'audio',
-    name: 'The Audio Pipeline',
-    icon: Headphones,
-    short: '9,360 clips. Seven voices. Pace-verified.',
-    detail:
-      'Every spoken line is pre-rendered, hash-addressed and speed-checked against a target words-per-minute for its level, so no lesson is delivered too fast or too slow.',
-    accent: '#ff6b35',
-  },
-  {
-    id: 'broadcast',
-    name: 'The Broadcast Network',
-    icon: Radio,
-    short: 'Owned and operated.',
-    detail:
-      'TikTok, YouTube, Instagram and Telegram — the distribution layer. Built, filmed, written and scheduled in-house. No agency.',
-    accent: '#c0c0c0',
-  },
+/** Structural metadata only — copy comes from the dictionary. */
+const NODE_META: { key: string; icon: LucideIcon; accent: string }[] = [
+  { key: 'eec', icon: GraduationCap, accent: '#c9a84c' },
+  { key: 'engine', icon: Bot, accent: '#cd7f32' },
+  { key: 'practice', icon: ScrollText, accent: '#cd7f32' },
+  { key: 'assessment', icon: Target, accent: '#c9a84c' },
+  { key: 'audio', icon: Headphones, accent: '#ff6b35' },
+  { key: 'broadcast', icon: Radio, accent: '#c0c0c0' },
 ];
 
 export function EcosystemMap() {
+  const { t, rtl } = useLocale();
   const [open, setOpen] = useState<string | null>(null);
   const reduced = useReducedMotion();
   const { ref, seen } = useInViewOnce<HTMLDivElement>(0.25);
@@ -104,13 +49,14 @@ export function EcosystemMap() {
       <div className="shell">
         <Rise>
           <div className="mb-14 text-center">
-            <Kicker className="mb-4">Not A Logo Wall</Kicker>
-            <h2 className="t-display-l mb-5 text-[#c9a84c] text-glow">THE ARCHITECTURE</h2>
-            <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
-              &ldquo;Most people show you a client list. I&rsquo;ll show you the
-              wiring.&rdquo;
+            <Kicker className={`mb-4 ${rtl ? 'ar-text' : ''}`}>{t.ecosystem.kicker}</Kicker>
+            <h2 className={`mb-5 text-[#c9a84c] text-glow ${rtl ? 'ar-text ar-display text-[clamp(1.8rem,5vw,3.2rem)]' : 't-display-l'}`}>
+              {t.ecosystem.title}
+            </h2>
+            <p className={`t-body-l mx-auto max-w-2xl text-[#b8a88a] ${rtl ? 'ar-text' : 'italic'}`}>
+              {t.ecosystem.lead}
             </p>
-            <ArabicSub className="mx-auto max-w-2xl">{AR.ecosystem}</ArabicSub>
+            {!rtl && <ArabicSub className="mx-auto max-w-2xl">{AR.ecosystem}</ArabicSub>}
           </div>
         </Rise>
 
@@ -130,11 +76,11 @@ export function EcosystemMap() {
                   boxShadow: '0 0 40px rgba(201,168,76,0.16)',
                 }}
               >
-                <p className="font-[family-name:var(--font-display)] text-base font-bold uppercase tracking-[0.2em] text-[#c9a84c] sm:text-lg">
-                  {IDENTITY.company}
+                <p className={`text-base font-bold text-[#c9a84c] sm:text-lg ${rtl ? 'ar-text ar-display' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.2em]'}`}>
+                  {t.ecosystem.hub}
                 </p>
-                <p className="mt-1 font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.2em] text-[#a08a63]">
-                  One Operator
+                <p className={`mt-1 text-[10px] text-[#a08a63] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.2em]'}`}>
+                  {t.ecosystem.hubSub}
                 </p>
               </div>
             </div>
@@ -162,39 +108,40 @@ export function EcosystemMap() {
 
         {/* ── Nodes ── */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {NODES.map((n, i) => {
-            const isOpen = open === n.id;
+          {NODE_META.map((meta, i) => {
+            const n = t.ecosystem.nodes[meta.key];
+            const isOpen = open === meta.key;
             return (
-              <Rise key={n.id} index={i}>
+              <Rise key={meta.key} index={i}>
                 <MetallicCard className="h-full">
                   <button
                     type="button"
-                    onClick={() => setOpen(isOpen ? null : n.id)}
+                    onClick={() => setOpen(isOpen ? null : meta.key)}
                     aria-expanded={isOpen}
-                    aria-controls={`eco-detail-${n.id}`}
-                    className="w-full cursor-pointer p-6 text-left"
+                    aria-controls={`eco-detail-${meta.key}`}
+                    className={`w-full cursor-pointer p-6 ${rtl ? 'text-right' : 'text-left'}`}
                   >
                     <div className="mb-4 flex items-start gap-3.5">
                       <span
                         className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border"
                         style={{
-                          borderColor: `${n.accent}44`,
-                          backgroundColor: `${n.accent}12`,
+                          borderColor: `${meta.accent}44`,
+                          backgroundColor: `${meta.accent}12`,
                         }}
                       >
-                        <n.icon
+                        <meta.icon
                           className="h-[18px] w-[18px]"
-                          style={{ color: n.accent }}
+                          style={{ color: meta.accent }}
                           aria-hidden="true"
                         />
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold uppercase leading-snug tracking-[0.1em] text-[#e8e0d0] sm:text-sm">
+                        <span className={`block text-[13px] font-bold leading-snug text-[#e8e0d0] sm:text-sm ${rtl ? 'ar-text' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.1em]'}`}>
                           {n.name}
                         </span>
                         <span
-                          className="mt-1.5 block font-[family-name:var(--font-data)] text-[10.5px] uppercase tracking-[0.1em]"
-                          style={{ color: n.accent }}
+                          className={`mt-1.5 block text-[10.5px] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.1em]'}`}
+                          style={{ color: meta.accent }}
                         >
                           {n.short}
                         </span>
@@ -202,20 +149,20 @@ export function EcosystemMap() {
                     </div>
 
                     <div
-                      id={`eco-detail-${n.id}`}
+                      id={`eco-detail-${meta.key}`}
                       className="grid transition-all duration-500"
                       style={{
                         gridTemplateRows: isOpen ? '1fr' : '0fr',
                         opacity: isOpen ? 1 : 0,
                       }}
                     >
-                      <p className="overflow-hidden text-[14px] leading-relaxed text-[#cfc4ae]">
+                      <p className={`overflow-hidden text-[14px] leading-relaxed text-[#cfc4ae] ${rtl ? 'ar-text' : ''}`}>
                         {n.detail}
                       </p>
                     </div>
 
-                    <span className="mt-3 inline-block font-[family-name:var(--font-data)] text-[9.5px] uppercase tracking-[0.22em] text-[#a08a63]">
-                      {isOpen ? '— Close' : '+ Detail'}
+                    <span className={`mt-3 inline-block text-[9.5px] text-[#a08a63] ${rtl ? 'ar-text text-[11px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.22em]'}`}>
+                      {isOpen ? t.ecosystem.closeDetail : t.ecosystem.detail}
                     </span>
                   </button>
                 </MetallicCard>
@@ -224,7 +171,7 @@ export function EcosystemMap() {
           })}
         </div>
 
-        <KickerClose>One operator. Six systems. Zero outsourcing.</KickerClose>
+        <KickerClose>{t.ecosystem.close}</KickerClose>
       </div>
     </section>
   );

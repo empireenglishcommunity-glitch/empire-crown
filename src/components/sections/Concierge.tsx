@@ -29,10 +29,11 @@ import {
   CONTACT,
   PROPERTIES,
   assembleEmail,
-  assemblePhone,
   channel,
+  whatsappLink,
 } from '@/site.config';
 import { AR } from '@/i18n/ar';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /**
  * §10 THE CONCIERGE — the primary CTA and the page's whole conversion mechanism.
@@ -59,11 +60,11 @@ import { AR } from '@/i18n/ar';
 type Intent = {
   id: string;
   icon: LucideIcon;
-  label: string;
-  sub: string;
   accent: string;
-  /** Pre-filled WhatsApp subject, or null if this intent has no WhatsApp route. */
-  waSubject: string | null;
+  /** Whether this intent offers a WhatsApp route. The pre-filled subject itself is
+   *  localised in the dictionary (concierge.waSubjects) so the first line of the
+   *  message arrives in the reader's own language. */
+  hasWhatsapp: boolean;
   /** Which gated channels this intent may reveal. */
   showBusinessEmail: boolean;
   showPublicEmail: boolean;
@@ -75,18 +76,14 @@ type Intent = {
   instagram: 'eec' | 'personal' | null;
   /** Arabic label + sub-copy. The Concierge is the conversion surface, so it is
    *  the single most important place on the page to be readable in Arabic. */
-  labelAr: string;
-  subAr: string;
 };
 
 const INTENTS: Intent[] = [
   {
     id: 'learn',
     icon: BookOpen,
-    label: 'Learn English',
-    sub: 'Join EEC and start at your real level.',
     accent: '#c9a84c',
-    waSubject: null,
+    hasWhatsapp: false,
     showBusinessEmail: false,
     showPublicEmail: true,
     showTelegram: true,
@@ -94,16 +91,12 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: false,
     instagram: 'eec',
-    labelAr: AR.concierge.labels.learn,
-    subAr: AR.concierge.intents.learn,
   },
   {
     id: 'consult',
     icon: CalendarCheck,
-    label: 'Book a consultation',
-    sub: 'One conversation. Bring a real problem.',
     accent: '#cd7f32',
-    waSubject: 'Consultation request — ',
+    hasWhatsapp: true,
     showBusinessEmail: false,
     showPublicEmail: true,
     showTelegram: false,
@@ -111,16 +104,12 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: true,
     instagram: null,
-    labelAr: AR.concierge.labels.consult,
-    subAr: AR.concierge.intents.consult,
   },
   {
     id: 'business',
     icon: Briefcase,
-    label: 'Business & collaboration',
-    sub: 'Brand deals, partnerships, ventures.',
     accent: '#c0c0c0',
-    waSubject: 'Business enquiry — ',
+    hasWhatsapp: true,
     showBusinessEmail: true,
     showPublicEmail: false,
     showTelegram: false,
@@ -128,16 +117,12 @@ const INTENTS: Intent[] = [
     showLinkedIn: true,
     showRegional: true,
     instagram: 'personal',
-    labelAr: AR.concierge.labels.business,
-    subAr: AR.concierge.intents.business,
   },
   {
     id: 'mentorship',
     icon: Compass,
-    label: 'Mentorship & coaching',
-    sub: 'AI fluency, discipline, direction.',
     accent: '#ff6b35',
-    waSubject: 'Mentorship enquiry — ',
+    hasWhatsapp: true,
     showBusinessEmail: false,
     showPublicEmail: true,
     showTelegram: false,
@@ -145,16 +130,12 @@ const INTENTS: Intent[] = [
     showLinkedIn: false,
     showRegional: false,
     instagram: null,
-    labelAr: AR.concierge.labels.mentorship,
-    subAr: AR.concierge.intents.mentorship,
   },
   {
     id: 'media',
     icon: Mic,
-    label: 'Media & speaking',
-    sub: 'Press, interviews, stages, panels.',
     accent: '#e74c3c',
-    waSubject: null,
+    hasWhatsapp: false,
     showBusinessEmail: true,
     showPublicEmail: false,
     showTelegram: false,
@@ -162,8 +143,6 @@ const INTENTS: Intent[] = [
     showLinkedIn: true,
     showRegional: false,
     instagram: 'personal',
-    labelAr: AR.concierge.labels.media,
-    subAr: AR.concierge.intents.media,
   },
 ];
 
@@ -189,6 +168,7 @@ function Route({
   href,
   accent,
   onReveal,
+  rtl,
 }: {
   icon: LucideIcon;
   label: string;
@@ -196,6 +176,7 @@ function Route({
   href?: string;
   accent: string;
   onReveal?: () => void;
+  rtl: boolean;
 }) {
   const inner = (
     <>
@@ -205,8 +186,8 @@ function Route({
       >
         <Icon className="h-[17px] w-[17px]" style={{ color: accent }} aria-hidden="true" />
       </span>
-      <span className="min-w-0 text-left">
-        <span className="block font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.2em] text-[#a08a63]">
+      <span className={`min-w-0 ${rtl ? 'text-right' : 'text-left'}`}>
+        <span className={`block text-[10px] text-[#a08a63] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.2em]'}`}>
           {label}
         </span>
         <span className="mt-0.5 block truncate text-[15px] text-[#e8e0d0]">{value}</span>
@@ -233,19 +214,17 @@ function Route({
 }
 
 export function Concierge() {
+  const { t, rtl } = useLocale();
   const [selected, setSelected] = useState<Intent | null>(null);
 
   /** Gated values, populated only when the visitor explicitly asks (R-CNC-6). */
   const [businessEmail, setBusinessEmail] = useState<string | null>(null);
-  const [regionalShown, setRegionalShown] = useState(false);
 
-  const waHref = (subject: string) =>
-    `https://wa.me/${CONTACT.whatsapp.digits}?text=${encodeURIComponent(subject)}`;
+  const waHref = whatsappLink;
 
   const reset = () => {
     setSelected(null);
     setBusinessEmail(null);
-    setRegionalShown(false);
   };
 
   return (
@@ -258,19 +237,23 @@ export function Concierge() {
       <div className="shell relative">
         <Rise>
           <div className="mb-14 text-center">
-            <Kicker className="mb-4">The Concierge</Kicker>
-            <h2 className="t-display-l mb-5 text-[#c9a84c] text-glow">
-              HOW DO YOU WANT TO CONNECT?
+            <Kicker className={`mb-4 ${rtl ? 'ar-text' : ''}`}>{t.concierge.kicker}</Kicker>
+            <h2 className={`mb-5 text-[#c9a84c] text-glow ${rtl ? 'ar-text ar-display text-[clamp(1.6rem,4.5vw,2.8rem)]' : 't-display-l'}`}>
+              {t.concierge.title}
             </h2>
-            <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
-              &ldquo;Tell me what you need. I&rsquo;ll be on the other end.&rdquo;
+            <p className={`t-body-l mx-auto max-w-2xl text-[#b8a88a] ${rtl ? 'ar-text' : 'italic'}`}>
+              {t.concierge.lead}
             </p>
-            <Arabic display className="mx-auto mt-5 max-w-2xl text-lg text-[#c9a84c]">
-              {AR.concierge.title}
-            </Arabic>
-            <Arabic className="mx-auto mt-2 max-w-2xl text-[15px] text-[#b8a88a]">
-              {AR.concierge.lead}
-            </Arabic>
+            {!rtl && (
+              <>
+                <Arabic display className="mx-auto mt-5 max-w-2xl text-lg text-[#c9a84c]">
+                  {AR.concierge.title}
+                </Arabic>
+                <Arabic className="mx-auto mt-2 max-w-2xl text-[15px] text-[#b8a88a]">
+                  {AR.concierge.lead}
+                </Arabic>
+              </>
+            )}
           </div>
         </Rise>
 
@@ -279,7 +262,7 @@ export function Concierge() {
             <MetallicCard hover={false} className="p-7 sm:p-10">
               {/* ══ Step 1 — choose an intent ══ */}
               {!selected && (
-                <div className="space-y-3" role="group" aria-label="Choose what you need">
+                <div className="space-y-3" role="group" aria-label={t.concierge.ariaGroup}>
                   {INTENTS.map((intent) => (
                     <button
                       key={intent.id}
@@ -302,30 +285,32 @@ export function Concierge() {
                       </span>
                       <span className="min-w-0 flex-1">
                         <span
-                          className="block font-[family-name:var(--font-display)] text-sm font-bold uppercase tracking-[0.12em] sm:text-base"
+                          className={`block text-sm font-bold sm:text-base ${rtl ? 'ar-text ar-display' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.12em]'}`}
                           style={{ color: intent.accent }}
                         >
-                          {intent.label}
+                          {t.concierge.intents[intent.id].label}
                         </span>
-                        <span className="mt-1 block text-[14px] text-[#b8a88a]">
-                          {intent.sub}
+                        <span className={`mt-1 block text-[14px] text-[#b8a88a] ${rtl ? 'ar-text' : ''}`}>
+                          {t.concierge.intents[intent.id].sub}
                         </span>
-                        {/* Arabic label + sub. A learner who cannot read the English
-                            above must still be able to pick the right door. */}
-                        <Arabic
-                          as="span"
-                          className="mt-2 block text-[13.5px] leading-relaxed text-[#a08a63]"
-                        >
-                          <span className="font-bold text-[#b8a88a]">{intent.labelAr}</span>
-                          {' — '}
-                          {intent.subAr}
-                        </Arabic>
+                        {!rtl && (
+                          <Arabic
+                            as="span"
+                            className="mt-2 block text-[13.5px] leading-relaxed text-[#a08a63]"
+                          >
+                            <span className="font-bold text-[#b8a88a]">
+                              {AR.concierge.labels[intent.id as keyof typeof AR.concierge.labels]}
+                            </span>
+                            {' — '}
+                            {AR.concierge.intents[intent.id as keyof typeof AR.concierge.intents]}
+                          </Arabic>
+                        )}
                       </span>
                       <span
-                        className="shrink-0 font-[family-name:var(--font-data)] text-lg text-[#8b7355] transition-transform duration-300 group-hover:translate-x-1"
+                        className={`shrink-0 font-[family-name:var(--font-data)] text-lg text-[#8f7a58] transition-transform duration-300 ${rtl ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}
                         aria-hidden="true"
                       >
-                        →
+                        {rtl ? '←' : '→'}
                       </span>
                     </button>
                   ))}
@@ -338,10 +323,13 @@ export function Concierge() {
                   <button
                     type="button"
                     onClick={reset}
-                    className="mb-6 inline-flex cursor-pointer items-center gap-2 font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63] transition-colors hover:text-[#c9a84c]"
+                    className={`mb-6 inline-flex cursor-pointer items-center gap-2 text-[10px] text-[#a08a63] transition-colors hover:text-[#c9a84c] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.22em]'}`}
                   >
-                    <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-                    All options
+                    <ArrowLeft
+                      className={`h-3.5 w-3.5 ${rtl ? 'rotate-180' : ''}`}
+                      aria-hidden="true"
+                    />
+                    {t.concierge.back}
                   </button>
 
                   <div className="mb-7 flex items-center gap-4">
@@ -360,53 +348,61 @@ export function Concierge() {
                     </span>
                     <div>
                       <h3
-                        className="font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-[0.12em] sm:text-xl"
+                        className={`text-lg font-bold sm:text-xl ${rtl ? 'ar-text ar-display' : 'font-[family-name:var(--font-display)] uppercase tracking-[0.12em]'}`}
                         style={{ color: selected.accent }}
                       >
-                        {selected.label}
+                        {t.concierge.intents[selected.id].label}
                       </h3>
-                      <p className="mt-0.5 text-[14px] text-[#b8a88a]">{selected.sub}</p>
+                      <p className={`mt-0.5 text-[14px] text-[#b8a88a] ${rtl ? 'ar-text' : ''}`}>
+                        {t.concierge.intents[selected.id].sub}
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    {selected.waSubject && (
+                    {selected.hasWhatsapp && (
                       <Route
                         icon={MessageCircle}
-                        label="WhatsApp — fastest"
+                        label={t.concierge.routes.whatsapp}
                         value={CONTACT.whatsapp.display}
-                        href={waHref(selected.waSubject)}
+                        href={waHref(
+                          t.concierge.waSubjects[selected.id] ?? t.whatsappGreeting,
+                        )}
                         accent="#25d366"
+                        rtl={rtl}
                       />
                     )}
 
                     {selected.showPlacement && (
                       <Route
                         icon={Target}
-                        label="Free placement test"
+                        label={t.concierge.routes.placement}
                         value="assessment.empireenglish.online"
                         href={PROPERTIES.assessment}
                         accent="#c9a84c"
+                        rtl={rtl}
                       />
                     )}
 
                     {selected.showTelegram && (
                       <Route
                         icon={Send}
-                        label="Telegram community"
+                        label={t.concierge.routes.telegramCommunity}
                         value={telegram.handle}
                         href={telegram.url}
                         accent={telegram.accent}
+                        rtl={rtl}
                       />
                     )}
 
                     {selected.showPublicEmail && (
                       <Route
                         icon={Mail}
-                        label="Email"
+                        label={t.concierge.routes.email}
                         value={CONTACT.emailPublic.address}
                         href={`mailto:${CONTACT.emailPublic.address}`}
                         accent="#cd7f32"
+                        rtl={rtl}
                       />
                     )}
 
@@ -415,88 +411,71 @@ export function Concierge() {
                       (businessEmail ? (
                         <Route
                           icon={Mail}
-                          label="Business email"
+                          label={t.concierge.routes.businessEmail}
                           value={businessEmail}
                           href={`mailto:${businessEmail}`}
                           accent="#cd7f32"
-                        />
+                        rtl={rtl}
+                      />
                       ) : (
                         <Route
                           icon={Mail}
-                          label="Business email"
-                          value="Tap to reveal"
+                          label={t.concierge.routes.businessEmail}
+                          value={t.concierge.reveal}
                           accent="#cd7f32"
                           onReveal={() =>
                             setBusinessEmail(assembleEmail(CONTACT.emailBusinessEncoded))
                           }
-                        />
+                        rtl={rtl}
+                      />
                       ))}
 
                     {selected.showLinkedIn && (
                       <Route
                         icon={Linkedin}
-                        label="LinkedIn"
+                        label={t.concierge.routes.linkedin}
                         value={linkedin.handle}
                         href={linkedin.url}
                         accent={linkedin.accent}
+                        rtl={rtl}
                       />
                     )}
 
                     {selected.instagram === 'eec' && (
                       <Route
                         icon={Instagram}
-                        label="Instagram — Empire English"
+                        label={t.concierge.routes.instagramEec}
                         value={instagramEec.handle}
                         href={instagramEec.url}
                         accent={instagramEec.accent}
+                        rtl={rtl}
                       />
                     )}
 
                     {selected.instagram === 'personal' && (
                       <Route
                         icon={Instagram}
-                        label="Instagram — MACAL Empire"
+                        label={t.concierge.routes.instagramPersonal}
                         value={instagramPersonal.handle}
                         href={instagramPersonal.url}
                         accent={instagramPersonal.accent}
+                        rtl={rtl}
                       />
                     )}
                   </div>
 
-                  {/* Gated regional numbers */}
+                  {/* Regional numbers are no longer gated here — they are shown in
+                      full in the Direct Line block above (§9b), at the owner's
+                      instruction. Repeating them behind a disclosure would be both
+                      redundant and a weaker call to action. */}
                   {selected.showRegional && (
                     <div className="mt-6 border-t border-[rgba(201,168,76,0.15)] pt-5">
-                      {!regionalShown ? (
-                        <button
-                          type="button"
-                          onClick={() => setRegionalShown(true)}
-                          className="cursor-pointer font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63] underline decoration-[rgba(201,168,76,0.35)] underline-offset-4 transition-colors hover:text-[#c9a84c]"
-                        >
-                          Show regional numbers
-                        </button>
-                      ) : (
-                        <div className="space-y-2.5">
-                          {CONTACT.regionalEncoded.map((r) => {
-                            const number = assemblePhone(r.encoded);
-                            return (
-                              <div
-                                key={r.label}
-                                className="flex items-center justify-between gap-4 rounded-lg border border-[rgba(201,168,76,0.15)] bg-[rgba(17,17,24,0.6)] px-4 py-3"
-                              >
-                                <span className="font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.2em] text-[#a08a63]">
-                                  {r.label}
-                                </span>
-                                <a
-                                  href={`tel:${number.replace(/\s/g, '')}`}
-                                  className="font-[family-name:var(--font-data)] text-[15px] text-[#e8e0d0] transition-colors hover:text-[#c9a84c]"
-                                >
-                                  {number}
-                                </a>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      <a
+                        href="#direct"
+                        className={`text-[10px] text-[#a08a63] underline decoration-[rgba(201,168,76,0.35)] underline-offset-4 transition-colors hover:text-[#c9a84c] ${rtl ? 'ar-text text-[12px]' : 'font-[family-name:var(--font-data)] uppercase tracking-[0.22em]'}`}
+                      >
+                        {t.concierge.preferCall}
+                      </a>
                     </div>
                   )}
                 </div>
@@ -510,19 +489,19 @@ export function Concierge() {
           <div className="mt-8 text-center">
             <ImperialButton
               as="a"
-              href={waHref('Hello Mahmoud — ')}
+              href={waHref(t.whatsappGreeting)}
               target="_blank"
               rel="noopener noreferrer"
               variant="ghost"
               size="md"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              Or just message me directly
+              {t.concierge.fallback}
             </ImperialButton>
           </div>
         </Rise>
 
-        <KickerClose>One message is enough. Make it a real one.</KickerClose>
+        <KickerClose>{t.concierge.close}</KickerClose>
       </div>
     </section>
   );
