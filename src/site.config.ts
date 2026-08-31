@@ -110,6 +110,15 @@ export function assemblePhone(encoded: string): string {
  * CHANNELS
  * ───────────────────────────────────────────────────────────── */
 
+/**
+ * `brand` separates the two identities that share this page.
+ *
+ * There are genuinely two parallel account sets — the Empire English teaching brand and
+ * the personal / MACAL Empire brand — and collapsing them into one list was wrong. A
+ * learner looking for daily English lessons and a brand looking to collaborate want
+ * different accounts, so the Channels section groups them and the Concierge routes each
+ * intent to the right one.
+ */
 export type Channel = {
   id: string;
   platform: string;
@@ -118,26 +127,30 @@ export type Channel = {
   reason: string;
   accent: string;
   primary: boolean;
+  brand: 'eec' | 'personal';
 };
 
 export const CHANNELS: Channel[] = [
+  /* ── Empire English Community — the teaching brand ── */
   {
     id: 'tiktok-eec',
-    platform: 'TikTok — EEC',
+    platform: 'TikTok',
     handle: '@empireenglishcommunity',
     url: 'https://www.tiktok.com/@empireenglishcommunity',
     reason: 'English that actually sticks. Daily.',
     accent: '#00f2ea',
     primary: true,
+    brand: 'eec',
   },
   {
-    id: 'tiktok-macal',
-    platform: 'TikTok — MACAL',
-    handle: '@macal.empire',
-    url: 'https://www.tiktok.com/@macal.empire',
-    reason: 'Discipline, business, and the long game.',
-    accent: '#ff0050',
+    id: 'instagram-eec',
+    platform: 'Instagram',
+    handle: '@empireenglishcommunity',
+    url: 'https://www.instagram.com/empireenglishcommunity',
+    reason: 'Lessons, wins, and the community in motion.',
+    accent: '#dc2743',
     primary: true,
+    brand: 'eec',
   },
   {
     id: 'youtube',
@@ -147,15 +160,7 @@ export const CHANNELS: Channel[] = [
     reason: 'Long-form. Where the real teaching lives.',
     accent: '#ff0000',
     primary: true,
-  },
-  {
-    id: 'instagram',
-    platform: 'Instagram',
-    handle: '@empireenglishcommunity',
-    url: 'https://www.instagram.com/empireenglishcommunity',
-    reason: 'The visual record of the work.',
-    accent: '#dc2743',
-    primary: true,
+    brand: 'eec',
   },
   {
     id: 'telegram',
@@ -165,6 +170,29 @@ export const CHANNELS: Channel[] = [
     reason: 'Announcements first. Community always.',
     accent: '#2aabee',
     primary: true,
+    brand: 'eec',
+  },
+
+  /* ── MACAL Empire / personal — the founder brand ── */
+  {
+    id: 'tiktok-macal',
+    platform: 'TikTok',
+    handle: '@macal.empire',
+    url: 'https://www.tiktok.com/@macal.empire',
+    reason: 'Discipline, business, and the long game.',
+    accent: '#ff0050',
+    primary: true,
+    brand: 'personal',
+  },
+  {
+    id: 'instagram-personal',
+    platform: 'Instagram',
+    handle: '@macals_empire_official',
+    url: 'https://www.instagram.com/macals_empire_official',
+    reason: 'The personal record. Rooms, work, and the standard.',
+    accent: '#f09433',
+    primary: true,
+    brand: 'personal',
   },
   {
     id: 'linkedin',
@@ -174,6 +202,7 @@ export const CHANNELS: Channel[] = [
     reason: 'The professional file.',
     accent: '#0a66c2',
     primary: true,
+    brand: 'personal',
   },
   {
     id: 'facebook',
@@ -183,8 +212,19 @@ export const CHANNELS: Channel[] = [
     reason: 'The personal side of the empire.',
     accent: '#1877f2',
     primary: false,
+    brand: 'personal',
   },
 ];
+
+/** Convenience lookups. Throw loudly rather than rendering a broken link. */
+export function channel(id: string): Channel {
+  const found = CHANNELS.find((c) => c.id === id);
+  if (!found) throw new Error(`Unknown channel id: ${id}`);
+  return found;
+}
+
+export const EEC_CHANNELS = CHANNELS.filter((c) => c.brand === 'eec');
+export const PERSONAL_CHANNELS = CHANNELS.filter((c) => c.brand === 'personal');
 
 /** Product properties inside the ecosystem. */
 export const PROPERTIES = {
