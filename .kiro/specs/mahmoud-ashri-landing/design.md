@@ -398,14 +398,17 @@ Six social cards, each with platform accent, handle, and a one-line reason to fo
 | TikTok — EEC | `@empireenglishcommunity` | English that actually sticks. Daily. |
 | TikTok — MACAL | `@macal.empire` | Discipline, business, the long game. |
 | YouTube | `@empireenglishcommunity` | Long-form. Where the real teaching lives. |
-| Instagram | `@empireenglishcommunity` `[OWNER TO CONFIRM]` | The visual record. |
+| Instagram | `@empireenglishcommunity` | The visual record. |
 | Telegram | `Empire_English_Community` | Announcements first. Community always. |
 | LinkedIn | `mahmoud-ashri` | The professional file. |
 
 Facebook appears as a smaller secondary link.
 
-`[OWNER TO CONFIRM]` — the live assessment site ships `@macals_empire_official` for Instagram;
-the owner supplied `@empireenglishcommunity`. Both are wired; confirm which is canonical.
+**Instagram handle — RESOLVED 2026-08-31.** `@empireenglishcommunity` is canonical, confirmed
+by the owner. Note that the live assessment site (`empire-oracle`,
+`src/components/empire/SocialMediaSection.tsx`) still ships `@macals_empire_official`, so
+**that repo is now the one carrying a stale handle** — worth a follow-up PR against
+`empire-oracle` so the two properties agree.
 
 ### §12 Footer
 

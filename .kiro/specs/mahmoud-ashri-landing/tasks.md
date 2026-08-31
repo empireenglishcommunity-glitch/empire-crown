@@ -63,7 +63,9 @@
 ## Phase 5 — Deploy (OWNER-GATED)
 
 - [ ] 5.1 **Owner:** commit the four real photographs over the placeholders
-- [ ] 5.2 **Owner:** confirm the canonical Instagram handle
+- [x] 5.2 ~~**Owner:** confirm the canonical Instagram handle~~ — **RESOLVED 2026-08-31:**
+      `@empireenglishcommunity` is canonical. `empire-oracle` now holds the stale
+      `@macals_empire_official` and should be corrected in a follow-up PR.
 - [ ] 5.3 **Owner:** supply `CLOUDFLARE_API_TOKEN` (Account · Cloudflare Pages · Edit)
 - [ ] 5.4 `npx wrangler pages deploy out --project-name=empire-crown`
 - [ ] 5.5 Map `mahmoud-ashr.empireenglish.online` as a custom domain

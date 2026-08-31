@@ -179,9 +179,8 @@ per session, **never committed**.
 ## Before going live
 
 - [ ] Replace the four placeholder photographs (see `public/photos/README.md`)
-- [ ] Confirm the canonical Instagram handle — the owner supplied
-      `@empireenglishcommunity`, the live assessment site ships
-      `@macals_empire_official`
+- [x] Instagram handle confirmed: **`@empireenglishcommunity`** (2026-08-31). Follow-up:
+      `empire-oracle` still ships `@macals_empire_official` and should be corrected there
 - [ ] Replace `public/og-image.jpg` with a designed share card
 - [ ] Record the new subdomain in `empire-chronicle/SYSTEM-MAP.md`
 
