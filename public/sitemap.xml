@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!--
+  Both locales, each declaring the other via xhtml:link alternates.
+
+  The Arabic route was missing from this file entirely when it shipped — the page
+  existed, was linked, and carried correct hreflang, but was absent from the sitemap.
+  Declaring the alternates here as well as in the pages is what Google actually
+  recommends for a bilingual site: it removes any dependence on the crawler reaching
+  both URLs before it understands they are a pair.
+-->
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
   <url>
     <loc>https://mahmoud-ashri.empireenglish.online/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mahmoud-ashri.empireenglish.online/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mahmoud-ashri.empireenglish.online/ar/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mahmoud-ashri.empireenglish.online/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mahmoud-ashri.empireenglish.online/ar/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mahmoud-ashri.empireenglish.online/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mahmoud-ashri.empireenglish.online/ar/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mahmoud-ashri.empireenglish.online/" />
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
