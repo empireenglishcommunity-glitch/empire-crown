@@ -1,0 +1,60 @@
+# Cloudflare Pages headers.
+#
+# WHY THIS FILE EXISTS
+# Pages defaults every asset to `public, max-age=14400, must-revalidate` — four hours,
+# with revalidation, applied uniformly. That is wrong in both directions:
+#
+#   - `/_next/static/*` filenames contain a content hash, so they can NEVER change
+#     without the URL changing. Revalidating them every four hours is pure waste; they
+#     should be cached for a year and marked immutable.
+#   - Photographs and the audio track change only when the owner replaces them, so four
+#     hours is far shorter than reality warrants.
+#
+# The net effect of the default is that a returning visitor re-checks ~470 KB of assets
+# that could not possibly have changed.
+
+# ── Content-hashed build output: cache forever ──
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── Owner-supplied media: long, but revalidatable so a replacement propagates ──
+/photos/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/audio/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+# Pages serves .webm as `video/webm` by sniffing the container. This file holds an Opus
+# audio stream and no video, and the correct type lets a browser skip allocating any
+# video decoding path.
+/audio/ambient.opus.webm
+  Content-Type: audio/webm; codecs=opus
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/og-image.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+# ── HTML: always revalidate so a deploy is visible immediately ──
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/ar/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ── Security headers on everything ──
+#
+# This is a static marketing site with no authentication and no user input, so the risk
+# surface is small — but these are free, and two of them matter here specifically:
+# frame-ancestors stops the page being embedded in someone else's frame and passed off
+# as their own, and Permissions-Policy denies APIs the page never uses, so a future
+# dependency cannot quietly start asking for a camera.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains

@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     alternateLocale: ['en_US'],
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image-ar.jpg',
         width: 1200,
         height: 630,
         alt: t.meta.ogAlt,
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/og-image.jpg'],
+    images: ['/og-image-ar.jpg'],
   },
   robots: {
     index: true,
