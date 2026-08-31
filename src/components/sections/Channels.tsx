@@ -1,7 +1,7 @@
 'use client';
 
 import { Kicker, KickerClose, Rise } from '@/components/ui';
-import { CHANNELS } from '@/site.config';
+import { EEC_CHANNELS, PERSONAL_CHANNELS, type Channel } from '@/site.config';
 
 /** Brand marks kept as inline SVG paths — no icon-library dependency for logos. */
 const MARKS: Record<string, string> = {
@@ -24,15 +24,93 @@ function markFor(id: string): string {
   return MARKS[id] ?? MARKS.instagram;
 }
 
+function ChannelCard({ c }: { c: Channel }) {
+  return (
+    <a href={c.url} target="_blank" rel="noopener noreferrer" className="group block h-full">
+      <div className="relative h-full overflow-hidden rounded-xl border border-[rgba(201,168,76,0.15)] bg-gradient-to-br from-[#111118] to-[#1a1a2e] p-6 transition-all duration-500 hover:-translate-y-1 hover:border-[rgba(201,168,76,0.4)]">
+        {/* Top edge in the platform's colour */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-[2px] opacity-40 transition-opacity duration-500 group-hover:opacity-100"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${c.accent}, transparent)`,
+          }}
+        />
+        {/* Colour wash on hover */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+          style={{
+            background: `radial-gradient(ellipse at top right, ${c.accent}14, transparent 65%)`,
+          }}
+        />
+
+        <div className="relative">
+          <div className="mb-4 flex items-center gap-3.5">
+            <span
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border transition-transform duration-500 group-hover:scale-110"
+              style={{
+                borderColor: `${c.accent}44`,
+                backgroundColor: `${c.accent}12`,
+                color: c.accent,
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d={markFor(c.id)} />
+              </svg>
+            </span>
+            <span className="min-w-0">
+              <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold uppercase tracking-[0.12em] text-[#e8e0d0]">
+                {c.platform}
+              </span>
+              <span
+                className="mt-0.5 block truncate font-[family-name:var(--font-data)] text-[11px]"
+                style={{ color: c.accent }}
+              >
+                {c.handle}
+              </span>
+            </span>
+          </div>
+          <p className="text-[14px] leading-relaxed text-[#cfc4ae]">{c.reason}</p>
+        </div>
+      </div>
+    </a>
+  );
+}
+
 /**
  * §11 THE CHANNELS — the distribution layer, presented as owned infrastructure.
  *
- * Note the framing: each card gives a *reason to follow*, not a follower count.
- * Counts are a claim that ages badly and invites comparison; a reason is an argument.
+ * GROUPED BY BRAND, deliberately. There are two parallel account sets: the Empire
+ * English teaching brand and the personal / MACAL Empire brand. An earlier version
+ * flattened them into one list, which quietly made the page harder to use — a learner
+ * hunting for daily English lessons had to guess which account taught and which one
+ * posted business content.
+ *
+ * Splitting them also turns a potential weakness into the argument the page is already
+ * making: two brands, run by one operator, is *evidence* of an ecosystem rather than a
+ * scattered social presence.
+ *
+ * Note the framing on each card: a *reason to follow*, never a follower count. Counts
+ * age badly and invite comparison; a reason is an argument.
  */
 export function Channels() {
-  const primary = CHANNELS.filter((c) => c.primary);
-  const secondary = CHANNELS.filter((c) => !c.primary);
+  const groups = [
+    {
+      key: 'eec',
+      label: 'Empire English Community',
+      note: 'For the learners. Teaching, community, announcements.',
+      channels: EEC_CHANNELS.filter((c) => c.primary),
+    },
+    {
+      key: 'personal',
+      label: 'MACAL Empire · Personal',
+      note: 'For the builders. Business, discipline, the standard.',
+      channels: PERSONAL_CHANNELS.filter((c) => c.primary),
+    },
+  ];
+
+  const secondary = [...EEC_CHANNELS, ...PERSONAL_CHANNELS].filter((c) => !c.primary);
 
   return (
     <section id="channels" className="relative py-20 sm:py-28">
@@ -42,77 +120,48 @@ export function Channels() {
             <Kicker className="mb-4">Beyond This Page</Kicker>
             <h2 className="t-display-l mb-5 text-[#c9a84c] text-glow">THE CHANNELS</h2>
             <p className="t-body-l mx-auto max-w-2xl italic text-[#b8a88a]">
-              &ldquo;Six channels. All mine. All run by the same hands that built the
-              system.&rdquo;
+              &ldquo;Two brands. One operator. Follow the one you came for.&rdquo;
             </p>
           </div>
         </Rise>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {primary.map((c, i) => (
-            <Rise key={c.id} index={i}>
-              <a
-                href={c.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block h-full"
-              >
-                <div className="relative h-full overflow-hidden rounded-xl border border-[rgba(201,168,76,0.15)] bg-gradient-to-br from-[#111118] to-[#1a1a2e] p-6 transition-all duration-500 hover:-translate-y-1 hover:border-[rgba(201,168,76,0.4)]">
-                  {/* Top edge in the platform's colour */}
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-x-0 top-0 h-[2px] opacity-40 transition-opacity duration-500 group-hover:opacity-100"
-                    style={{
-                      background: `linear-gradient(90deg, transparent, ${c.accent}, transparent)`,
-                    }}
-                  />
-                  {/* Colour wash on hover */}
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                    style={{
-                      background: `radial-gradient(ellipse at top right, ${c.accent}14, transparent 65%)`,
-                    }}
-                  />
-
-                  <div className="relative">
-                    <div className="mb-4 flex items-center gap-3.5">
-                      <span
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border transition-transform duration-500 group-hover:scale-110"
-                        style={{
-                          borderColor: `${c.accent}44`,
-                          backgroundColor: `${c.accent}12`,
-                          color: c.accent,
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
-                          <path d={markFor(c.id)} />
-                        </svg>
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold uppercase tracking-[0.12em] text-[#e8e0d0]">
-                          {c.platform}
-                        </span>
-                        <span
-                          className="mt-0.5 block truncate font-[family-name:var(--font-data)] text-[11px]"
-                          style={{ color: c.accent }}
-                        >
-                          {c.handle}
-                        </span>
-                      </span>
-                    </div>
-                    <p className="text-[14px] leading-relaxed text-[#cfc4ae]">{c.reason}</p>
+        <div className="space-y-14">
+          {groups.map((group) => (
+            <div key={group.key}>
+              <Rise>
+                <div className="mb-7 flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
+                  <div>
+                    <h3 className="font-[family-name:var(--font-display)] text-base font-bold uppercase tracking-[0.2em] text-[#c9a84c] sm:text-lg">
+                      {group.label}
+                    </h3>
+                    <p className="mt-1.5 text-[14px] italic text-[#b8a88a]">{group.note}</p>
                   </div>
+                  <div
+                    className="hidden h-px flex-1 sm:ml-8 sm:block"
+                    style={{
+                      background:
+                        'linear-gradient(90deg, rgba(201,168,76,0.35), transparent)',
+                    }}
+                    aria-hidden="true"
+                  />
                 </div>
-              </a>
-            </Rise>
+              </Rise>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {group.channels.map((c, i) => (
+                  <Rise key={c.id} index={i}>
+                    <ChannelCard c={c} />
+                  </Rise>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
         {/* Secondary links */}
         {secondary.length > 0 && (
-          <Rise index={6}>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <Rise>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               {secondary.map((c) => (
                 <a
                   key={c.id}

@@ -25,11 +25,11 @@ import {
   Rise,
 } from '@/components/ui';
 import {
-  CHANNELS,
   CONTACT,
   PROPERTIES,
   assembleEmail,
   assemblePhone,
+  channel,
 } from '@/site.config';
 
 /**
@@ -68,8 +68,9 @@ type Intent = {
   showTelegram: boolean;
   showPlacement: boolean;
   showLinkedIn: boolean;
-  showInstagram: boolean;
   showRegional: boolean;
+  /** Which Instagram account this intent should be sent to, if any. */
+  instagram: 'eec' | 'personal' | null;
 };
 
 const INTENTS: Intent[] = [
@@ -85,8 +86,8 @@ const INTENTS: Intent[] = [
     showTelegram: true,
     showPlacement: true,
     showLinkedIn: false,
-    showInstagram: false,
     showRegional: false,
+    instagram: 'eec',
   },
   {
     id: 'consult',
@@ -100,8 +101,8 @@ const INTENTS: Intent[] = [
     showTelegram: false,
     showPlacement: false,
     showLinkedIn: false,
-    showInstagram: false,
     showRegional: true,
+    instagram: null,
   },
   {
     id: 'business',
@@ -115,8 +116,8 @@ const INTENTS: Intent[] = [
     showTelegram: false,
     showPlacement: false,
     showLinkedIn: true,
-    showInstagram: false,
     showRegional: true,
+    instagram: 'personal',
   },
   {
     id: 'mentorship',
@@ -130,8 +131,8 @@ const INTENTS: Intent[] = [
     showTelegram: false,
     showPlacement: false,
     showLinkedIn: false,
-    showInstagram: false,
     showRegional: false,
+    instagram: null,
   },
   {
     id: 'media',
@@ -145,14 +146,24 @@ const INTENTS: Intent[] = [
     showTelegram: false,
     showPlacement: false,
     showLinkedIn: true,
-    showInstagram: true,
     showRegional: false,
+    instagram: 'personal',
   },
 ];
 
-const telegram = CHANNELS.find((c) => c.id === 'telegram')!;
-const linkedin = CHANNELS.find((c) => c.id === 'linkedin')!;
-const instagram = CHANNELS.find((c) => c.id === 'instagram')!;
+const telegram = channel('telegram');
+const linkedin = channel('linkedin');
+
+/**
+ * There are two Instagram accounts and they serve different people, so each intent gets
+ * the right one rather than a generic "Instagram" link:
+ *   - learners  → the Empire English teaching account
+ *   - press/media/brands → the personal / MACAL Empire account
+ * Sending a journalist to a grammar-lesson feed, or a student to a business feed, is a
+ * small mistake that loses the lead entirely.
+ */
+const instagramEec = channel('instagram-eec');
+const instagramPersonal = channel('instagram-personal');
 
 /** A single revealed channel row. */
 function Route({
@@ -399,13 +410,23 @@ export function Concierge() {
                       />
                     )}
 
-                    {selected.showInstagram && (
+                    {selected.instagram === 'eec' && (
                       <Route
                         icon={Instagram}
-                        label="Instagram"
-                        value={instagram.handle}
-                        href={instagram.url}
-                        accent={instagram.accent}
+                        label="Instagram — Empire English"
+                        value={instagramEec.handle}
+                        href={instagramEec.url}
+                        accent={instagramEec.accent}
+                      />
+                    )}
+
+                    {selected.instagram === 'personal' && (
+                      <Route
+                        icon={Instagram}
+                        label="Instagram — MACAL Empire"
+                        value={instagramPersonal.handle}
+                        href={instagramPersonal.url}
+                        accent={instagramPersonal.accent}
                       />
                     )}
                   </div>
