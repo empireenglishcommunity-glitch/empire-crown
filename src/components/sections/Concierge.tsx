@@ -29,8 +29,8 @@ import {
   CONTACT,
   PROPERTIES,
   assembleEmail,
-  assemblePhone,
   channel,
+  whatsappLink,
 } from '@/site.config';
 import { AR } from '@/i18n/ar';
 
@@ -237,15 +237,12 @@ export function Concierge() {
 
   /** Gated values, populated only when the visitor explicitly asks (R-CNC-6). */
   const [businessEmail, setBusinessEmail] = useState<string | null>(null);
-  const [regionalShown, setRegionalShown] = useState(false);
 
-  const waHref = (subject: string) =>
-    `https://wa.me/${CONTACT.whatsapp.digits}?text=${encodeURIComponent(subject)}`;
+  const waHref = whatsappLink;
 
   const reset = () => {
     setSelected(null);
     setBusinessEmail(null);
-    setRegionalShown(false);
   };
 
   return (
@@ -463,40 +460,18 @@ export function Concierge() {
                     )}
                   </div>
 
-                  {/* Gated regional numbers */}
+                  {/* Regional numbers are no longer gated here — they are shown in
+                      full in the Direct Line block above (§9b), at the owner's
+                      instruction. Repeating them behind a disclosure would be both
+                      redundant and a weaker call to action. */}
                   {selected.showRegional && (
                     <div className="mt-6 border-t border-[rgba(201,168,76,0.15)] pt-5">
-                      {!regionalShown ? (
-                        <button
-                          type="button"
-                          onClick={() => setRegionalShown(true)}
-                          className="cursor-pointer font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63] underline decoration-[rgba(201,168,76,0.35)] underline-offset-4 transition-colors hover:text-[#c9a84c]"
-                        >
-                          Show regional numbers
-                        </button>
-                      ) : (
-                        <div className="space-y-2.5">
-                          {CONTACT.regionalEncoded.map((r) => {
-                            const number = assemblePhone(r.encoded);
-                            return (
-                              <div
-                                key={r.label}
-                                className="flex items-center justify-between gap-4 rounded-lg border border-[rgba(201,168,76,0.15)] bg-[rgba(17,17,24,0.6)] px-4 py-3"
-                              >
-                                <span className="font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.2em] text-[#a08a63]">
-                                  {r.label}
-                                </span>
-                                <a
-                                  href={`tel:${number.replace(/\s/g, '')}`}
-                                  className="font-[family-name:var(--font-data)] text-[15px] text-[#e8e0d0] transition-colors hover:text-[#c9a84c]"
-                                >
-                                  {number}
-                                </a>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      <a
+                        href="#direct"
+                        className="font-[family-name:var(--font-data)] text-[10px] uppercase tracking-[0.22em] text-[#a08a63] underline decoration-[rgba(201,168,76,0.35)] underline-offset-4 transition-colors hover:text-[#c9a84c]"
+                      >
+                        Prefer to call? All my numbers →
+                      </a>
                     </div>
                   )}
                 </div>

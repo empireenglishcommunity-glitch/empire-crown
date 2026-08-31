@@ -4,7 +4,7 @@ inclusion: always
 
 # empire-crown — project rules
 
-Personal brand landing page for Mahmoud Ashri at `mahmoud-ashr.empireenglish.online`.
+Personal brand landing page for Mahmoud Ashri at `mahmoud-ashri.empireenglish.online`.
 Next.js static export → Cloudflare Pages. Read
 `.kiro/specs/mahmoud-ashri-landing/` before changing anything structural.
 

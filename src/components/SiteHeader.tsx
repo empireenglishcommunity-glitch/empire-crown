@@ -21,7 +21,7 @@ const NAV = [
   { label: 'Proof', href: '#proof' },
   { label: 'System', href: '#ecosystem' },
   { label: 'English', href: '#eec' },
-  { label: 'Doctrine', href: '#doctrine' },
+  { label: 'Contact', href: '#direct' },
 ];
 
 export function SiteHeader() {

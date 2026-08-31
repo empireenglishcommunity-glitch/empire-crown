@@ -493,7 +493,7 @@ npm run build          # next build, output: 'export' → ./out
 npx wrangler pages deploy out --project-name=empire-crown --branch=main
 ```
 
-Then map `mahmoud-ashr.empireenglish.online` in the Pages project's custom-domain settings.
+Then map `mahmoud-ashri.empireenglish.online` in the Pages project's custom-domain settings.
 Requires `CLOUDFLARE_API_TOKEN` (owner-supplied per session, never committed) and account
 `8c2ca895bd4e579be07d2fa6c9fdba7e` (an identifier, not a credential).
 

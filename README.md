@@ -8,7 +8,7 @@ The founder/crown layer that sits above the product repos in the Empire ecosyste
 
 | | |
 |---|---|
-| **Live target** | `mahmoud-ashr.empireenglish.online` |
+| **Live target** | `mahmoud-ashri.empireenglish.online` |
 | **Stack** | Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · framer-motion |
 | **Hosting** | Cloudflare Pages — **static export**, zero running cost |
 | **Spec** | [`.kiro/specs/mahmoud-ashri-landing/`](.kiro/specs/mahmoud-ashri-landing/) |

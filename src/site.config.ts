@@ -18,8 +18,8 @@ export const IDENTITY = {
   platformShort: 'EEC',
   roleLine: 'FOUNDER · OPERATOR · MENTOR',
   locations: 'DUBAI · CAIRO',
-  domain: 'mahmoud-ashr.empireenglish.online',
-  url: 'https://mahmoud-ashr.empireenglish.online',
+  domain: 'mahmoud-ashri.empireenglish.online',
+  url: 'https://mahmoud-ashri.empireenglish.online',
 
   /** The governing sentence. Every section is measured against this. */
   thesis:
@@ -58,30 +58,48 @@ export const CONTACT = {
   },
 
   /**
-   * Gated — business/press only. Stored base64-encoded and decoded on click.
+   * Personal Telegram — direct line to the owner.
    *
-   * WHY ENCODED AND NOT JUST SPLIT: an earlier version stored the local part as the
-   * plain string 'm.nasserashri'. The assembled address never appeared in the export,
-   * but the username did — and a harvester grepping for the surname finds that just
-   * as easily. Encoding means no email-shaped or name-shaped substring exists in the
-   * bundle at all.
+   * NOT the same thing as the Empire English announcement group. That group is a
+   * broadcast channel for students; this is a one-to-one channel to Mahmoud. Keeping
+   * them visually distinct matters, or people post questions into the announcements
+   * feed and assume nobody read them.
+   */
+  telegramDirect: {
+    handle: '@macal_emperor',
+    url: 'https://t.me/macal_emperor',
+  },
+
+  /**
+   * PUBLIC as of 2026-08-31, at the owner's explicit and repeated instruction.
    *
-   * This is NOT encryption and is not claimed to be. The threat model is automated
-   * regex harvesters scraping static files, and against those it works. A determined
-   * human reading the source will of course decode it in seconds — that is an
-   * accepted trade, and the alternative (publishing the owner's personal address in
-   * plain text) is strictly worse.
+   * These were previously base64-assembled on click so no phone-shaped string existed
+   * in the static export. The owner has asked that direct contact be *prominent*, and
+   * obfuscation works directly against prominence — a number nobody can see until
+   * they click is not a strong call to action.
+   *
+   * So this is a deliberate, owner-owned trade: reach beats scrape-resistance. The
+   * cost is real and should be expected — published numbers get harvested, which
+   * means spam calls and WhatsApp junk within weeks. Documented here so that when it
+   * happens, it reads as a known consequence rather than a mystery.
+   *
+   * If it becomes a problem the fix is not to hide them again — it is a second SIM or
+   * a WhatsApp Business number used as the public front door.
+   */
+  phones: [
+    { label: 'UAE', display: '+971 50 703 9573', dial: '+971507039573' },
+    { label: 'Egypt', display: '+20 104 121 5787', dial: '+201041215787' },
+  ],
+
+  /**
+   * Still gated. The business/press inbox stays assembled-on-click because email
+   * harvesting is far more automated than phone harvesting, and an address in the
+   * clear on a public page attracts volume that a phone number does not.
    */
   emailBusinessEncoded: {
     user: 'bS5uYXNzZXJhc2hyaQ==',
     domain: 'Z21haWwuY29t',
   },
-
-  /** Gated — revealed only behind an explicit disclosure control. Same reasoning. */
-  regionalEncoded: [
-    { label: 'Egypt', encoded: 'KzIwIDEwNCAxMjEgNTc4Nw==' },
-    { label: 'UAE', encoded: 'Kzk3MSA1MCA3MDMgOTU3Mw==' },
-  ],
 } as const;
 
 /** Decode a gated value. Client-only — never call this during render. */
@@ -101,9 +119,9 @@ export function assembleEmail(parts: { user: string; domain: string }): string {
   return user && domain ? `${user}@${domain}` : '';
 }
 
-/** Reveal a gated phone number at interaction time. */
-export function assemblePhone(encoded: string): string {
-  return decode(encoded);
+/** Build a wa.me deep link with a pre-filled, intent-specific first message. */
+export function whatsappLink(subject: string): string {
+  return `https://wa.me/${CONTACT.whatsapp.digits}?text=${encodeURIComponent(subject)}`;
 }
 
 /* ─────────────────────────────────────────────────────────────

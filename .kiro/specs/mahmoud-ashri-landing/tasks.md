@@ -6,7 +6,7 @@
 > The site is deployed and visually verified at **https://empire-crown.pages.dev**.
 > Real photographs are imported; both Instagram accounts are wired.
 > **One thing is outstanding and it needs the owner:** the custom domain
-> `mahmoud-ashr.empireenglish.online` is attached to the Pages project but cannot
+> `mahmoud-ashri.empireenglish.online` is attached to the Pages project but cannot
 > validate until a `CNAME mahmoud-ashr → empire-crown.pages.dev` DNS record exists — the
 > supplied API token was Pages-scoped, with no DNS permission. See task 5.5.
 > **Phase 6 (Arabic) and Phase 7 (enhancements) are specified but not started.**
@@ -83,7 +83,7 @@
 - [ ] 5.5 🟡 **Custom domain registered but PENDING.** The domain is attached to the Pages
       project, but it cannot validate because **no DNS record exists** and the supplied
       token had no `Zone:DNS:Edit` permission, so Cloudflare could not create one
-      automatically. `mahmoud-ashr.empireenglish.online` does not resolve.
+      automatically. `mahmoud-ashri.empireenglish.online` does not resolve.
       **Fix (owner, ~30s):** Cloudflare → DNS for `empireenglish.online` → add
       `CNAME  mahmoud-ashr → empire-crown.pages.dev`, **Proxied**. The Pages domain then
       validates on its own within about a minute.
