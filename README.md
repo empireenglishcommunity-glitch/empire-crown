@@ -178,10 +178,17 @@ per session, **never committed**.
 
 ## Before going live
 
-- [ ] Replace the four placeholder photographs (see `public/photos/README.md`)
+- [x] Real photographs imported (2026-08-31) — see `docs/PHOTOS.md`
 - [x] Instagram handle confirmed: **`@empireenglishcommunity`** (2026-08-31). Follow-up:
       `empire-oracle` still ships `@macals_empire_official` and should be corrected there
+- [ ] **Re-export the photographs at higher resolution.** All four are currently below
+      ~1200px wide, so they look slightly soft on a retina display. Drop larger files
+      into `photos-source/` under the same names and re-run the import script — no code
+      change needed
 - [ ] Replace `public/og-image.jpg` with a designed share card
+- [ ] Look at the deployed page. **Nobody has seen it rendered yet** — the sandbox
+      browser cannot reach the sandbox's own localhost, so this build is verified
+      structurally but not visually
 - [ ] Record the new subdomain in `empire-chronicle/SYSTEM-MAP.md`
 
 ## Contributing

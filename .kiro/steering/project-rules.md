@@ -84,7 +84,7 @@ speech, kickers), not its analogies.
 - Zero paid dependencies. No usage-capped SaaS. No AI on any request path.
 - Performance budget: LCP < 2.5s on mid-tier Android over 4G. The audience is in Egypt
   and the UAE, not on fibre. Large photographs are the most likely way to break this —
-  see `public/photos/README.md`.
+  see `docs/PHOTOS.md`.
 
 ## 6. Photo paths are contractual
 

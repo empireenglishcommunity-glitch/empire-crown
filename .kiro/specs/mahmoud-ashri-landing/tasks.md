@@ -51,7 +51,7 @@
 
 ## Phase 4 — Assets, SEO, verification
 
-- [x] 4.1 Placeholder photos at all four contractual paths + `public/photos/README.md`
+- [x] 4.1 Placeholder photos at all four contractual paths + `docs/PHOTOS.md`
 - [x] 4.2 M-crown emblem as inline SVG (no binary dependency, scales, themeable)
 - [x] 4.3 Metadata: title, description, canonical, OG, Twitter card
 - [x] 4.4 JSON-LD `Person` + `Organization` with full `sameAs`
@@ -62,7 +62,12 @@
 
 ## Phase 5 — Deploy (OWNER-GATED)
 
-- [ ] 5.1 **Owner:** commit the four real photographs over the placeholders
+- [x] 5.1 ~~**Owner:** commit the four real photographs over the placeholders~~ —
+      **DONE 2026-08-31.** Owner uploaded four HEIC files to `main`; they are converted
+      to the five web-ready assets by `scripts/import_photos.py`. Originals kept in
+      `photos-source/` for reproducibility. See `docs/PHOTOS.md`.
+      **Still open:** all four are below the ~1200px width target and will look soft on
+      retina. Re-export larger and re-run the script.
 - [x] 5.2 ~~**Owner:** confirm the canonical Instagram handle~~ — **RESOLVED 2026-08-31:**
       `@empireenglishcommunity` is canonical. `empire-oracle` now holds the stale
       `@macals_empire_official` and should be corrected in a follow-up PR.

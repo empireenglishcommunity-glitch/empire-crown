@@ -192,12 +192,14 @@ export function RoleConstellation() {
                 boxShadow: '0 0 44px rgba(201,168,76,0.2), inset 0 0 26px rgba(0,0,0,0.6)',
               }}
             >
+              {/* Dedicated square head-and-shoulders crop — a circle filled with a
+                  full-length 3:4 frame reads as a tiny figure lost in a ring. */}
               <Image
-                src="/photos/chapter-02-authority.jpg"
+                src="/photos/portrait-constellation.jpg"
                 alt={`${IDENTITY.name}, founder of ${IDENTITY.company}`}
                 fill
                 sizes="200px"
-                className="object-cover object-top"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,10,10,0.35)] to-transparent" />
             </div>
@@ -239,11 +241,11 @@ export function RoleConstellation() {
               }}
             >
               <Image
-                src="/photos/chapter-02-authority.jpg"
+                src="/photos/portrait-constellation.jpg"
                 alt={`${IDENTITY.name}, founder of ${IDENTITY.company}`}
                 fill
                 sizes="168px"
-                className="object-cover object-top"
+                className="object-cover"
               />
             </div>
           </div>
