@@ -10,7 +10,9 @@ import { IDENTITY, CHANNELS, PROPERTIES } from '@/site.config';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '900'],
+  // 900 was declared and never used. 400 IS used — outline/ghost buttons and
+  // the nav links inherit it — so it stays.
+  weight: ['400', '600', '700'],
   variable: '--font-cinzel',
   display: 'swap',
   fallback: ['Georgia', 'Times New Roman', 'serif'],
@@ -43,8 +45,11 @@ const mono = JetBrains_Mono({
  * imitate it — which is the right relationship between two scripts on one page.
  */
 const tajawal = Tajawal({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '700'],
+  // Arabic subset ONLY. Tajawal never renders Latin on this page — the bidi rule
+  // keeps Latin out of Arabic strings — so shipping its latin subset was ~20 KB
+  // of font nobody ever sees. Weight 500 was also declared and never used.
+  subsets: ['arabic'],
+  weight: ['400', '700'],
   variable: '--font-tajawal',
   display: 'swap',
   fallback: ['Segoe UI', 'Tahoma', 'sans-serif'],
