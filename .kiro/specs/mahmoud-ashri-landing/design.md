@@ -3,6 +3,13 @@
 **Companion to** `requirements.md` (intent) and `tasks.md` (sequence).
 This document is the single source of truth for **tokens, section architecture, and copy**.
 
+> **Status: DELIVERED 2026-08-31.** Sections §13–§15 below were added *after* the original
+> design and describe what actually shipped: the Direct Line block, the bilingual
+> architecture, and the ambient-audio design. Copy now lives in
+> **`src/i18n/content.ts`**, not in this document — the copy tables in §5 are the design
+> record, the dictionary is the implementation. If they disagree, the dictionary is what
+> visitors see.
+
 ---
 
 ## 1. Design thesis
@@ -499,3 +506,136 @@ Requires `CLOUDFLARE_API_TOKEN` (owner-supplied per session, never committed) an
 
 **Note:** as with `empire-dojo`, **merging is not deploying.** The deploy is a deliberate
 separate command.
+
+
+---
+
+## 13. §9b THE DIRECT LINE — added 2026-08-31
+
+**Why it exists alongside the Concierge.** The Concierge is a *router*: it asks what you
+need, then reveals only the relevant channel. That is right for five audiences, but it
+costs one interaction before any contact detail appears — and a visitor who already knows
+they want to speak to Mahmoud should not have to answer a question first.
+
+| Section | Serves |
+|---|---|
+| **DirectLine** (§9b) | *"I want to reach him."* Zero clicks. Numbers on screen. |
+| **Concierge** (§10) | *"I'm not sure which door is mine."* Guided. |
+
+Placed immediately **before** the Concierge, so the fast path is offered first and the
+router catches everyone else.
+
+**Layout.** `GlowingBorder` at high intensity around a bracketed `MetallicCard` — the
+brightest thing in its neighbourhood, deliberately. Inside: two large channel cards
+(WhatsApp in its own green, Telegram in its own blue — platform colour beats house gold
+here, because recognisability *is* the affordance), a hairline, then the two phone numbers
+as tap-to-call rows in house gold.
+
+**Copy.** Kicker `NO FORMS · NO GATEKEEPERS`. Title **TALK TO ME DIRECTLY**.
+Lead: *"You don't need an assistant, a form, or a funnel. Here are my actual numbers."*
+Close: *"I read my own messages. Bring something real and you'll get a real answer."*
+
+Phone numbers carry `dir="ltr"` even on the Arabic page — a number is not text to mirror.
+
+## 14. BILINGUAL ARCHITECTURE
+
+### Two routes, one composition
+
+```
+/      → PageBody locale="en"   (app/(en)/)
+/ar/   → PageBody locale="ar"   (app/(ar)/ar/)
+```
+
+Copy in **one dictionary** (`src/i18n/content.ts`) read through a `LocaleProvider` context.
+A second set of Arabic components was rejected: it doubles the places a layout bug must be
+fixed, and the pages would drift within a month.
+
+**Two root layouts** via route groups, because `lang` and `dir` belong on `<html>` and only
+a root layout can own that element. A wrapper `<div dir="rtl">` works for layout and screen
+readers but leaves `<html lang="en">` on the Arabic page — an incorrect signal handed to
+crawlers. Shared shell in `app/shared-layout.tsx`.
+
+Side benefit: two root layouts make a language switch a full document load, which is
+correct when the entire document direction changes.
+
+### Arabic typography is a second system, not a font
+
+| Rule | Why | Enforced by |
+|---|---|---|
+| `letter-spacing: 0` | Arabic letters **join**; tracking fractures them | `.ar-text` + `check_arabic.py` |
+| `text-transform: none` | Arabic has no case; `uppercase` is a silent no-op | `.ar-text` |
+| **Tajawal** | Cinzel/Playfair contain **zero** Arabic glyphs (no `U+0600`) | `next/font`, arabic subset only |
+| `line-height: 1.9` | Taller ascenders/descenders and diacritics | `.ar-text` |
+| ≤1 embedded Latin token per line | Bidi reorders 2+ unpredictably per browser | `check_arabic.py` |
+
+Hierarchy in Arabic therefore comes from **weight and size**, never caps and tracking.
+
+### What is NOT translated
+
+- **His name.** Proper noun and brand mark; a transliteration reads as a different person.
+- **Numbers.** LTR, mono, `dir="ltr"`.
+- **Platform names** (TikTok, LinkedIn) — the marks are the recognisable thing.
+
+### Direction-sensitive details that flip
+
+Tactical-panel accent rule (`.tactical-rtl`) · doctrine list border · Concierge chevron
+(`→`/`←`) · scroll-progress transform origin · photo-chapter side alternation · audio
+control corner · skip-link position · group-heading rule gradient.
+
+### Register: MSA, and not mixed
+
+Modern Standard Arabic throughout, confirmed with the owner. Formal, authoritative, travels
+across Egypt and the Gulf. **Do not mix registers** — MSA headings with dialect buttons
+reads as careless rather than friendly.
+
+The Arabic is **not literal**: "hold your wallet", "the long game" and "receipts" are
+rewritten to make the same point with Arabic idiom.
+
+## 15. AMBIENT AUDIO
+
+**Invitation, never a toll booth.** The product site attempts autoplay and, when blocked
+(always, on a first visit), renders a full-screen interstitial. On a landing page that is a
+conversion tax paid in exactly the leads the page exists to capture.
+
+| Property | Value |
+|---|---|
+| Autoplay | **Never** |
+| Gate / interstitial | **None** |
+| `preload` | **`none`** — zero bytes unless opted into |
+| Format | Opus **453 KB** (mp3 743 KB fallback); browser fetches one |
+| Volume | 0.14, `easeInOutSine` ramp over 2.2 s via `requestAnimationFrame` |
+| Persistence | `localStorage`; declining is never re-asked |
+| Invitation | Once, after 5 s, self-dismissing at 14 s |
+| Tab hidden | Auto-pause |
+| Position | Reading-**end** corner (right LTR, left RTL) |
+
+The source file contained an embedded 360×360 album-art JPEG; stripping it plus mono and
+loudness normalisation took 2,199 KB → 453 KB.
+
+`GainNode` was specified and **rejected in implementation**: `MediaElementSource` adds
+AudioContext lifecycle management (suspended states, iOS resume quirks) for no audible gain
+over a ~16 ms rAF ramp.
+
+## 16. DELIVERY INFRASTRUCTURE
+
+`public/_headers` — Pages defaults everything to `max-age=14400, must-revalidate`, which is
+wrong in both directions.
+
+| Path | Cache-Control |
+|---|---|
+| `/_next/static/*` | `max-age=31536000, immutable` (content-hashed) |
+| `/photos/*`, `/audio/*` | `max-age=2592000, stale-while-revalidate=86400` |
+| HTML | `max-age=0, must-revalidate` (deploys visible immediately) |
+
+Plus a corrected `Content-Type: audio/webm; codecs=opus` (Pages sniffed the container and
+said `video/webm`), and five security headers: `Referrer-Policy`, `X-Frame-Options`, CSP
+`frame-ancestors`, `Permissions-Policy`, HSTS.
+
+**404** is branded and bilingual. Because there are two root layouts, a global `not-found`
+has no shared layout to inherit and must render its own `<html>`/`<body>`.
+
+**OG cards are per-locale**: `og-image.jpg` and `og-image-ar.jpg` (mirrored — portrait
+right, text right-aligned). Generating the Arabic one required Pillow's **raqm/HarfBuzz**
+shaping; `arabic_reshaper` + `python-bidi` produce legacy presentation forms
+(`U+FE70–FEFF`) that Tajawal does not contain, so every glyph fell back to notdef.
+`make_og_card.py` refuses to write an Arabic card if raqm is unavailable.
